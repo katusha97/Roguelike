@@ -2,26 +2,34 @@ package server
 
 import java.net.ServerSocket
 import kotlinx.coroutines.*
-import utils.Creater
+import utils.Communication
+import java.lang.Runnable
 
-fun main() {
-    val server = ServerSocket(8000)
+class Server(private val serverSocket: ServerSocket) {
+    companion object {
+        val listeners: MutableList<Listener> = mutableListOf()
+    }
 
-    server.use {
-        println("Server was started!")
+    private fun startImpl() {
+        println("Server was started on localhost:${serverSocket.localPort}. Welcome!")
         while (true) {
             try {
-                Creater(server).use {
-                    Thread{
-                        println("Client connected")
-                        val request = it.readLine()
-                        val response = "Your input: $request"
-                        it.writeLine(response)
-                    }.run()
-                }
+                val accept = serverSocket.accept()
+                val communication = Communication(accept)
+
+                val listener = Listener(communication)
+                listeners.add(listener)
+                listener.start()
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
+
+    fun start() = serverSocket.use { startImpl() }
+}
+
+fun main() {
+    val server = Server(ServerSocket(8000))
+    server.start()
 }
