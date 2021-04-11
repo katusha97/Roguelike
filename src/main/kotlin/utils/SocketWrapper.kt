@@ -4,7 +4,7 @@ import java.io.*
 import java.net.ServerSocket
 import java.net.Socket
 
-class Creater: Closeable {
+class SocketWrapper: Closeable {
 
     private var socket: Socket
     private var reader: BufferedReader

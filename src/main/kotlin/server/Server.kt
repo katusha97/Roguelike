@@ -1,8 +1,7 @@
 package server
 
 import java.net.ServerSocket
-import kotlinx.coroutines.*
-import utils.Creater
+import utils.SocketWrapper
 
 fun main() {
     val server = ServerSocket(8000)
@@ -11,7 +10,7 @@ fun main() {
         println("Server was started!")
         while (true) {
             try {
-                Creater(server).use {
+                SocketWrapper(server).use {
                     Thread{
                         println("Client connected")
                         val request = it.readLine()

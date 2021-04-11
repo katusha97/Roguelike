@@ -1,9 +1,9 @@
 package client
 
-import utils.Creater
+import utils.SocketWrapper
 
 fun main() {
-    val socket = Creater("127.0.0.1", 8000)
+    val socket = SocketWrapper("127.0.0.1", 8000)
     try {
         socket.use {
             Thread {
