@@ -1,48 +1,29 @@
 package utils
 
 import java.io.*
-import java.net.ServerSocket
+import java.net.InetAddress
 import java.net.Socket
 
-class SocketWrapper: Closeable {
+class SocketWrapper(val socket: Socket) {
+    private val reader: BufferedReader = createReader()
+    private val writer: PrintStream = createWriter()
 
-    private var socket: Socket
-    private var reader: BufferedReader
-    private var writer: BufferedWriter
-
-    constructor(ip: String, port: Int) {
-        socket = Socket(ip, port)
-        reader = createReader()
-        writer = createWriter()
-    }
-
-    constructor(server: ServerSocket) {
-        socket = server.accept()
-        reader = createReader()
-        writer = createWriter()
-    }
+    val port: Int = socket.localPort
+    val host: InetAddress = socket.inetAddress
 
     private fun createReader(): BufferedReader {
         return BufferedReader(InputStreamReader(socket.getInputStream()))
     }
 
-    private fun createWriter(): BufferedWriter {
-       return BufferedWriter(OutputStreamWriter(socket.getOutputStream()))
+    private fun createWriter(): PrintStream {
+        return PrintStream(socket.getOutputStream())
     }
 
     fun writeLine(line: String) {
-        writer.write(line)
-        writer.newLine()
-        writer.flush()
+        writer.println(line)
     }
 
     fun readLine(): String {
         return reader.readLine()
-    }
-
-    override fun close() {
-        socket.close()
-        reader.close()
-        writer.close()
     }
 }

@@ -1,6 +1,7 @@
 package client.controller
 
 import common.commands.Command
+import common.commands.Exit
 import common.commands.Move
 import common.commands.Shoot
 import common.model.World
@@ -20,6 +21,10 @@ class ControllerImpl(override var world: World, private val socket: SocketWrappe
 
     override fun shoot() {
         send(Shoot())
+    }
+
+    override fun exit() {
+        send(Exit())
     }
 
     override fun pause() {

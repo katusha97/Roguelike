@@ -3,24 +3,31 @@ package server
 import java.net.ServerSocket
 import utils.SocketWrapper
 
-fun main() {
-    val server = ServerSocket(8000)
+class Server(private val serverSocket: ServerSocket) {
+    companion object {
+        val listeners: MutableList<ServerListener> = mutableListOf()
+    }
 
-    server.use {
-        println("Server was started!")
-        while (true) {
-            try {
-                SocketWrapper(server).use {
-                    Thread{
-                        println("Client connected")
-                        val request = it.readLine()
-                        val response = "Your input: $request"
-                        it.writeLine(response)
-                    }.run()
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
+    private fun startImpl() {
+        println("Server was started on localhost:${serverSocket.localPort}. Welcome!")
+        try {
+            while (true) {
+                val accept = serverSocket.accept()
+                val communication = SocketWrapper(accept)
+
+                val listener = ServerListener(communication)
+                listeners.add(listener)
+                listener.start()
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
+
+    fun start() = serverSocket.use { startImpl() }
+}
+
+fun main() {
+    val server = Server(ServerSocket(8000))
+    server.start()
 }

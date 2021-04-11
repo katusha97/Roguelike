@@ -9,4 +9,5 @@ interface Controller {
     fun shoot()
     fun pause()
     fun save()
+    fun exit()
 }

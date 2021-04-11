@@ -7,6 +7,10 @@ import java.awt.event.KeyListener
 import javax.swing.JFrame
 
 class View(private val nameOfFrame: String, private val controller: Controller) : JFrame(), KeyListener {
+    val viewWorld: Drawer = Drawer(controller.world, 1024, 768)
+    init {
+        viewWorld.isVisible = true
+    }
 
     init {
         createUI()
@@ -15,8 +19,6 @@ class View(private val nameOfFrame: String, private val controller: Controller) 
     private fun createUI() {
         title = nameOfFrame
         setSize(1024, 768)
-        val viewWorld = Drawer(controller.world, 1024, 768)
-        viewWorld.isVisible = true
         add(viewWorld)
         addKeyListener(this)
     }
@@ -36,6 +38,7 @@ class View(private val nameOfFrame: String, private val controller: Controller) 
             KeyEvent.VK_UP -> controller.move(Move.Direction.up)
             KeyEvent.VK_DOWN -> controller.move(Move.Direction.down)
             KeyEvent.VK_SPACE -> controller.shoot()
+            KeyEvent.VK_ESCAPE -> controller.exit()
         }
     }
 

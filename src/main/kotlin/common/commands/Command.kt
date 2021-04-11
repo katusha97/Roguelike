@@ -42,3 +42,15 @@ class Shoot: Command() {
         TODO("Not yet implemented")
     }
 }
+
+@Serializable
+class Exit: Command() {
+
+    override fun getName(): String {
+        return "exit"
+    }
+
+    override fun execute(currWorld: World): World {
+        TODO("Not yet implemented")
+    }
+}
