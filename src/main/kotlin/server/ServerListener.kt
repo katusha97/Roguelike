@@ -1,42 +1,60 @@
 package server
 
-import common.commands.Command
-import common.commands.*
-import kotlinx.serialization.decodeFromString
+import common.protocol.commands.Action
+import common.protocol.commands.*
+import common.protocol.ClientServerCommunicationException
+import common.protocol.ServerProtocol
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import server.engine.WorldGenerator
 import utils.SocketWrapper
 
-class ServerListener(val communication: SocketWrapper): Thread() {
-    override fun run() {
-        println("ServerListener: client connected with ${communication.host}:${communication.port}")
+class ServerListener(private val communication: SocketWrapper): Thread() {
+    private val protocol = ServerProtocol(communication)
+
+    private fun startCommunication() {
+        log("Client connected with ${communication.host}:${communication.port}")
+
+        val gen = WorldGenerator()
+        val world = gen.generateWorld()
+        log("World map has generated")
+
+        protocol.sendInitializeWorld(world)
+        log("World has sent to client")
 
         while (true) {
-            val request: String? = try { communication.readLine() } catch (e: Exception) { null }
-            if (request == null) {
-                log("client disconnected")
-                break
-            }
+            val action = protocol.readAction()
 
-            val decoded = Json.decodeFromString<Command>(request)
-            log("Receive msg:$decoded")
-
-            when (decoded) {
+            when (action) {
                 is Exit -> {
-                    log("stop working with client")
-                    val response = Json.encodeToString<Command>(decoded)
+                    log("Stop working with client")
+                    val response = Json.encodeToString<Action>(action)
                     communication.writeLine(response)
                     break
                 }
                 else -> {
-                    val response = Json.encodeToString(decoded)
+                    val response = Json.encodeToString(action)
                     communication.writeLine(response)
                 }
             }
         }
     }
 
+    override fun run() {
+        try {
+            startCommunication()
+        } catch (e: ClientServerCommunicationException) {
+            log("Communication ERROR: $e")
+        } catch (e: Exception) {
+            log("Critical ERROR: $e")
+        }
+    }
+
     private fun log(msg: String) {
         println("ServerListener: $msg")
+    }
+
+    private fun logErr(msg: String) {
+        System.err.println("ServerListener ERROR: $msg")
     }
 }

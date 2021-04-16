@@ -1,10 +1,10 @@
-package common.commands
+package common.protocol.commands
 
 import common.model.World
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class Command {
+sealed class Action {
 
     abstract fun getName(): String
 
@@ -12,7 +12,7 @@ sealed class Command {
 }
 
 @Serializable
-class Move(private val direction: Direction): Command() {
+class Move(private val direction: Direction): Action() {
 
     override fun getName(): String {
         return "move"
@@ -32,7 +32,7 @@ class Move(private val direction: Direction): Command() {
 
 
 @Serializable
-class Shoot: Command() {
+class Shoot: Action() {
 
     override fun getName(): String {
         return "shoot"
@@ -44,7 +44,7 @@ class Shoot: Command() {
 }
 
 @Serializable
-class Exit: Command() {
+class Exit: Action() {
 
     override fun getName(): String {
         return "exit"

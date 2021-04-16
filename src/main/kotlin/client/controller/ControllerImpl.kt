@@ -1,30 +1,25 @@
 package client.controller
 
-import common.commands.Command
-import common.commands.Exit
-import common.commands.Move
-import common.commands.Shoot
+import common.protocol.commands.Exit
+import common.protocol.commands.Move
+import common.protocol.commands.Shoot
 import common.model.World
-import kotlinx.serialization.*
-import kotlinx.serialization.json.Json
+import common.protocol.ClientProtocol
 import utils.SocketWrapper
 
-class ControllerImpl(override var world: World, private val socket: SocketWrapper) : Controller {
-
-    private fun send(command: Command) {
-        socket.writeLine(Json.encodeToString(command))
-    }
+class ControllerImpl(override var world: World, communication: SocketWrapper) : Controller {
+    private val protocol = ClientProtocol(communication)
 
     override fun move(direction: Move.Direction) {
-        send(Move(direction))
+        protocol.sendAction(Move(direction))
     }
 
     override fun shoot() {
-        send(Shoot())
+        protocol.sendAction(Shoot())
     }
 
     override fun exit() {
-        send(Exit())
+        protocol.sendAction(Exit())
     }
 
     override fun pause() {

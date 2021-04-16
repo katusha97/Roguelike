@@ -1,7 +1,7 @@
 package client.view
 
 import client.controller.Controller
-import common.commands.Move
+import common.protocol.commands.Move
 import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
 import javax.swing.JFrame

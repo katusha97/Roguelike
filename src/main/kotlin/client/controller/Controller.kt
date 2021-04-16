@@ -1,6 +1,6 @@
 package client.controller
 
-import common.commands.Move
+import common.protocol.commands.Move
 import common.model.World
 
 interface Controller {
