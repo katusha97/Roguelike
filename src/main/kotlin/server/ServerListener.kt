@@ -28,13 +28,11 @@ class ServerListener(private val communication: SocketWrapper): Thread() {
             when (action) {
                 is Exit -> {
                     log("Stop working with client")
-                    val response = Json.encodeToString<Action>(action)
-                    communication.writeLine(response)
+                    protocol.sendServerCommand(ExitAccept())
                     break
-                }
-                else -> {
-                    val response = Json.encodeToString(action)
-                    communication.writeLine(response)
+                } else -> {
+                    action.execute(world)
+                    protocol.sendServerCommand(UpdateWorld(world))
                 }
             }
         }

@@ -1,15 +1,17 @@
 package common.protocol
 
 import common.model.WorldProposal
-import common.protocol.commands.Action
-import common.protocol.commands.ActionRequest
-import common.protocol.commands.InitializeWorld
-import common.protocol.commands.UpdateWorld
+import common.protocol.commands.*
 import utils.SocketWrapper
 
 class ClientProtocol(communication: SocketWrapper): ProtocolBase(communication) {
     fun sendAction(action: Action) {
         send(ActionRequest(action))
+    }
+
+    fun readServerCommand(): ServerCommand {
+        val cmd = read<ServerCommand>()
+        return cmd
     }
 
     fun readInitializeWorld(): WorldProposal {

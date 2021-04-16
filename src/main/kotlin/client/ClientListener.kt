@@ -1,36 +1,38 @@
 package client
 
 import client.view.View
-import common.protocol.commands.Action
-import common.protocol.commands.Exit
-import common.protocol.commands.Move
-import common.protocol.commands.Shoot
 import common.protocol.ClientProtocol
+import common.protocol.commands.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import utils.SocketWrapper
 import utils.toStringConsole
 import kotlin.system.exitProcess
 
-class ClientListener(val communication: SocketWrapper, val view: View): Thread() {
+class ClientListener(communication: SocketWrapper, val view: View): Thread() {
     private val protocol = ClientProtocol(communication)
 
     override fun run() {
-        val world = protocol.readInitializeWorld()
+        var world = protocol.readInitializeWorld()
 
         log("Retrieve world:")
         print(world.toStringConsole())
 
         while (true) {
-            val msg = communication.readLine()
-            val command = Json.decodeFromString<Action>(msg)
-            when (command) {
-                is Exit -> exitProcess(0)
-                is Move -> {
-                    log("Move accepted")
+            val cmd = protocol.readServerCommand()
+
+            when (cmd) {
+                is ExitAccept -> {
+                    log("Exit accepted. By-by!")
+                    exitProcess(0)
                 }
-                is Shoot -> {
-                    log("Shot accepted")
+                is InitializeWorld -> {
+                    TODO("Improve hierachy of ServerCommand to avoid unexpected cases")
+                }
+                is UpdateWorld -> {
+                    world = cmd.world
+                    log("Retrieved updated world:")
+                    println(world.toStringConsole())
                 }
             }
         }

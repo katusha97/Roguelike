@@ -5,6 +5,9 @@ import common.protocol.commands.*
 import utils.SocketWrapper
 
 class ServerProtocol(communication: SocketWrapper): ProtocolBase(communication) {
+    fun sendServerCommand(cmd: ServerCommand) {
+        send(cmd)
+    }
 
     fun sendUpdateWorld(world: WorldProposal) {
         send(UpdateWorld(world))
