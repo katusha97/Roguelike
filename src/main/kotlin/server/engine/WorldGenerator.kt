@@ -19,7 +19,7 @@ class WorldGenerator {
                 ),
                 5, 5
             ),
-            PlayerProposal(2, 2, 100)
+            PlayerProposal(3, 3, 100)
         )
     }
 }
