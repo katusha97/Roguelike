@@ -1,11 +1,8 @@
 package server
 
-import common.protocol.commands.Action
 import common.protocol.commands.*
 import common.protocol.ClientServerCommunicationException
 import common.protocol.ServerProtocol
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import server.engine.WorldGenerator
 import utils.SocketWrapper
 
@@ -15,8 +12,8 @@ class ServerListener(private val communication: SocketWrapper): Thread() {
     private fun startCommunication() {
         log("Client connected with ${communication.host}:${communication.port}")
 
-        val gen = WorldGenerator()
-        val world = gen.generateWorld()
+        val gen = WorldGenerator(21, 21)
+        val world = gen.generate()
         log("World map has generated")
 
         protocol.sendInitializeWorld(world)
