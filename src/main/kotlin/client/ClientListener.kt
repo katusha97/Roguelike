@@ -21,9 +21,7 @@ class ClientListener(communication: SocketWrapper, private val controller: Contr
         print(world.toStringConsole())
 
         while (true) {
-            val cmd = protocol.readServerCommand()
-
-            when (cmd) {
+            when (val cmd = protocol.readServerCommand()) {
                 is ExitAccept -> {
                     log("Exit accepted. By-by!")
                     exitProcess(0)

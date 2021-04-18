@@ -14,7 +14,6 @@ class Drawer(private val controller: Controller): JPanel() {
     private val startX = 50
 
     override fun paintComponent(g: Graphics?) {
-        println("paintComponent")
         super.paintComponent(g)
         if (g != null) {
             draw(g)
@@ -30,7 +29,7 @@ class Drawer(private val controller: Controller): JPanel() {
     private fun drawPlayer(player: PlayerProposal, g: Graphics) {
         val startY = sizeRect * controller.world.map.sizeY + 50
         val currX = (player.x - 1) * sizeRect + startX + (sizeRect / 2 - sizePlayer / 2)
-        val currY = startY - (player.y - 1) * sizeRect - (sizeRect / 2 + sizePlayer / 2)
+        val currY = startY - (player.y - 2) * sizeRect - (sizeRect / 2 + sizePlayer / 2)
         g.color = Color.RED
         g.fillOval(currX, currY, sizePlayer, sizePlayer)
     }

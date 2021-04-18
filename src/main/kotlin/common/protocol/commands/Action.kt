@@ -27,7 +27,11 @@ class Move(private val direction: Direction): Action() {
             Direction.UP -> y += 1
             Direction.DOWN -> y -= 1
         }
-        currWorld.player.move(x, y)
+
+        // TODO: Improve game object to stop this trash
+        if (!currWorld.map.stones.any { it.x == x && it.y == y }) {
+            currWorld.player.move(x, y)
+        }
     }
 
     enum class Direction {
