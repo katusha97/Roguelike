@@ -1,6 +1,6 @@
 package common.protocol
 
-import common.model.WorldProposal
+import common.model.World
 import common.protocol.commands.*
 import utils.SocketWrapper
 
@@ -9,11 +9,11 @@ class ServerProtocol(communication: SocketWrapper): ProtocolBase(communication) 
         send(cmd)
     }
 
-    fun sendUpdateWorld(world: WorldProposal) {
+    fun sendUpdateWorld(world: World) {
         send(UpdateWorld(world))
     }
 
-    fun sendInitializeWorld(world: WorldProposal) {
+    fun sendInitializeWorld(world: World) {
         send(InitializeWorld(world))
     }
 

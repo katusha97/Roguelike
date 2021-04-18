@@ -1,6 +1,6 @@
 package common.protocol
 
-import common.model.WorldProposal
+import common.model.World
 import common.protocol.commands.*
 import utils.SocketWrapper
 
@@ -14,12 +14,12 @@ class ClientProtocol(communication: SocketWrapper): ProtocolBase(communication) 
         return cmd
     }
 
-    fun readInitializeWorld(): WorldProposal {
+    fun readInitializeWorld(): World {
         val updateWorldRequest = read<InitializeWorld>()
         return updateWorldRequest.world
     }
 
-    fun readUpdateWorld(): WorldProposal {
+    fun readUpdateWorld(): World {
         val updateWorldRequest = read<UpdateWorld>()
         return updateWorldRequest.world
     }

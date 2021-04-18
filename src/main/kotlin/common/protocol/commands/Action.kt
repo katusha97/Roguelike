@@ -1,6 +1,6 @@
 package common.protocol.commands
 
-import common.model.WorldProposal
+import common.model.World
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -8,7 +8,7 @@ sealed class Action {
 
     abstract fun getName(): String
 
-    abstract fun execute(currWorld: WorldProposal)
+    abstract fun execute(currWorld: World)
 }
 
 @Serializable
@@ -18,7 +18,7 @@ class Move(private val direction: Direction): Action() {
         return "move"
     }
 
-    override fun execute(currWorld: WorldProposal) {
+    override fun execute(currWorld: World) {
         var x = currWorld.player.x
         var y = currWorld.player.y
         when (direction) {
@@ -50,7 +50,7 @@ class Shoot: Action() {
         return "shoot"
     }
 
-    override fun execute(currWorld: WorldProposal) {
+    override fun execute(currWorld: World) {
         TODO("Not yet implemented")
     }
 }
@@ -62,7 +62,7 @@ class Exit: Action() {
         return "exit"
     }
 
-    override fun execute(currWorld: WorldProposal) {
+    override fun execute(currWorld: World) {
         TODO("Not yet implemented")
     }
 }

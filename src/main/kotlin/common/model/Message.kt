@@ -1,4 +1,3 @@
 package common.model
 
-class Message(val message: String) {
-}
+class Message(val message: String)

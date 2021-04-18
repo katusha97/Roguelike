@@ -1,9 +1,9 @@
 package server.engine
 
-import common.model.LevelStaticMapProposal
-import common.model.PlayerProposal
+import common.model.LevelStaticMap
+import common.model.Player
 import common.model.StoneItemProposal
-import common.model.WorldProposal
+import common.model.World
 
 class WorldGenerator(private val sizeX: Int, private val sizeY: Int) {
     init {
@@ -12,18 +12,18 @@ class WorldGenerator(private val sizeX: Int, private val sizeY: Int) {
 
     data class Point(val x: Int, val y: Int)
 
-    fun generate(): WorldProposal {
+    fun generate(): World {
         val stones = generateStones()
 
-        return WorldProposal(
-            LevelStaticMapProposal(
+        return World(
+            LevelStaticMap(
                 stones.map {
                     StoneItemProposal(it.x, it.y)
                 }.toSet(),
                 sizeX,
                 sizeY
             ),
-            PlayerProposal(2, 2, 100)
+            Player(2, 2, 100)
         )
     }
 

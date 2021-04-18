@@ -1,6 +1,6 @@
 package common.protocol.commands
 
-import common.model.WorldProposal
+import common.model.World
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -10,10 +10,10 @@ sealed class Command
 sealed class ServerCommand : Command()
 
 @Serializable
-class UpdateWorld(val world: WorldProposal) : ServerCommand()
+class UpdateWorld(val world: World) : ServerCommand()
 
 @Serializable
-class InitializeWorld(val world: WorldProposal) : ServerCommand()
+class InitializeWorld(val world: World) : ServerCommand()
 
 @Serializable
 class ExitAccept : ServerCommand()

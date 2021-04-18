@@ -30,5 +30,5 @@ sealed class MovableGameObject: GameObject {
 class StoneItemProposal(override val x: Int, override val y: Int) : StaticGameObject()
 
 @Serializable
-class PlayerProposal(override var posX: Int, override var posY: Int, var health: Int) : MovableGameObject()
+class Player(override var posX: Int, override var posY: Int, var health: Int) : MovableGameObject()
 

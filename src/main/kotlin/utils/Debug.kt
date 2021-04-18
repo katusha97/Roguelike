@@ -1,8 +1,8 @@
 package utils
 
-import common.model.WorldProposal
+import common.model.World
 
-fun WorldProposal.toStringConsole(): String {
+fun World.toStringConsole(): String {
     val stones = map.stones.map { Pair(it.x, it.y) }.toSet()
     val builder = StringBuilder()
     for (y in map.sizeY downTo 1) {

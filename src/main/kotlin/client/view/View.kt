@@ -1,46 +1,25 @@
 package client.view
 
-import client.controller.Controller
-import common.protocol.commands.Move
-import java.awt.event.KeyEvent
-import java.awt.event.KeyListener
+import common.model.World
 import javax.swing.JFrame
 
-class View(private val nameOfFrame: String, private var controller: Controller) : JFrame(), KeyListener {
-    private var viewWorld: Drawer = Drawer(controller)
+class View(private val nameOfFrame: String, world: World) : JFrame() {
+    private val viewWorld: Drawer = Drawer(world)
 
     init {
         viewWorld.isVisible = true
+        isVisible = true
         createUI()
+    }
+
+    fun updateWorld(newWorld: World) {
+        viewWorld.updateWorld(newWorld)
+        repaint()
     }
 
     private fun createUI() {
         title = nameOfFrame
         setSize(1024, 768)
         add(viewWorld)
-        addKeyListener(this)
-    }
-
-
-    override fun keyTyped(e: KeyEvent?) {
-
-    }
-
-    override fun keyPressed(e: KeyEvent?) {
-        if (e == null) {
-            return
-        }
-        when (e.keyCode) {
-            KeyEvent.VK_RIGHT -> controller.move(Move.Direction.RIGHT)
-            KeyEvent.VK_LEFT -> controller.move(Move.Direction.LEFT)
-            KeyEvent.VK_UP -> controller.move(Move.Direction.UP)
-            KeyEvent.VK_DOWN -> controller.move(Move.Direction.DOWN)
-            KeyEvent.VK_SPACE -> controller.shoot()
-            KeyEvent.VK_ESCAPE -> controller.exit()
-        }
-    }
-
-    override fun keyReleased(e: KeyEvent?) {
-
     }
 }
