@@ -13,6 +13,8 @@ class Drawer(private val world: WorldProposal, private val myWidth: Int, private
     private var startY = 50
 
     override fun paintComponent(g: Graphics?) {
+        println("paintComponent")
+
         super.paintComponent(g)
         if (g != null) {
             draw(g)

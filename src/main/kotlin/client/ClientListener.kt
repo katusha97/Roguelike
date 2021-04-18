@@ -13,10 +13,11 @@ class ClientListener(communication: SocketWrapper, private val view: View): Thre
     private val protocol = ClientProtocol(communication)
 
     override fun run() {
-//        var world = protocol.readInitializeWorld()
-//
-//        log("Retrieve world:")
-//        print(world.toStringConsole())
+        var world = protocol.readInitializeWorld()
+        view.controller.world = world
+
+        log("Retrieve world:")
+        print(world.toStringConsole())
 
         while (true) {
             val cmd = protocol.readServerCommand()
@@ -26,13 +27,11 @@ class ClientListener(communication: SocketWrapper, private val view: View): Thre
                     log("Exit accepted. By-by!")
                     exitProcess(0)
                 }
-                is InitializeWorld -> {
-                    view.controller.world = cmd.world
-                }
                 is UpdateWorld -> {
-                    view.controller.world = cmd.world
+                    world = cmd.world
+                    view.controller.world = world
                     log("Retrieved updated world:")
-//                    println(world.toStringConsole())
+                    println(world.toStringConsole())
                 }
             }
         }
