@@ -1,13 +1,16 @@
 package client.view
 
-import common.model.Line
-import common.model.Player
-import common.model.World
+import common.model.*
 import java.awt.Color
 import java.awt.Graphics
 import javax.swing.JPanel
 
-class Drawer(private val world: World, private val myWidth: Int, private val myHeight: Int): JPanel() {
+class Drawer(private val world: WorldProposal, private val myWidth: Int, private val myHeight: Int): JPanel() {
+
+    private val sizeRect = 30;
+    private val sizePlayer = 20;
+    private var startX = 50
+    private var startY = 50
 
     override fun paintComponent(g: Graphics?) {
         super.paintComponent(g)
@@ -16,20 +19,35 @@ class Drawer(private val world: World, private val myWidth: Int, private val myH
         }
     }
 
-    fun draw(g: Graphics) {
-        drawPlan(world.levelPlan.lines, g)
+    private fun draw(g: Graphics) {
+        drawPlan(world.map, g)
         drawPlayer(world.player, g)
     }
 
-    private fun drawPlayer(player: Player, g: Graphics) {
+    private fun drawPlayer(player: PlayerProposal, g: Graphics) {
+        val currX = player.x * sizeRect + startX + (sizeRect / 2 - sizePlayer / 2)
+        val currY = player.y * sizeRect + startY + (sizeRect / 2 - sizePlayer / 2)
         g.color = Color.RED
-        val diameter = myWidth / 80
-        g.fillOval(convertX(player.coordX), convertY(player.coordY), diameter, diameter)
+        g.fillOval(currX, currY, sizePlayer, sizePlayer)
     }
 
-    private fun drawPlan(lines: ArrayList<Line>, g: Graphics) {
-        for (l in lines) {
-            g.drawLine(convertX(l.x1), convertY(l.y1), convertX(l.x2), convertY(l.y2))
+    private fun drawPlan(map: LevelStaticMapProposal, g: Graphics) {
+        var x = startX
+        var y = startY
+        for (i in 0..map.sizeX) {
+            for (j in 0..map.sizeY) {
+                g.drawRect(x, y, sizeRect, sizeRect)
+                x += sizeRect
+            }
+            y += sizeRect
+            x = startX
+        }
+        y = startY
+        for (stone in map.stones) {
+            val currX = stone.x * sizeRect + x
+            val currY = stone.y * sizeRect + y
+            g.color = Color.BLUE
+            g.fillRect(currX, currY, sizeRect, sizeRect)
         }
     }
 

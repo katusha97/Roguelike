@@ -3,11 +3,11 @@ package client.controller
 import common.protocol.commands.Exit
 import common.protocol.commands.Move
 import common.protocol.commands.Shoot
-import common.model.World
+import common.model.WorldProposal
 import common.protocol.ClientProtocol
 import utils.SocketWrapper
 
-class ControllerImpl(override var world: World, communication: SocketWrapper) : Controller {
+class ControllerImpl(override var world: WorldProposal, communication: SocketWrapper) : Controller {
     private val protocol = ClientProtocol(communication)
 
     override fun move(direction: Move.Direction) {

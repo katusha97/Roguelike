@@ -6,8 +6,8 @@ import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
 import javax.swing.JFrame
 
-class View(private val nameOfFrame: String, private val controller: Controller) : JFrame(), KeyListener {
-    val viewWorld: Drawer = Drawer(controller.world, 1024, 768)
+class View(private val nameOfFrame: String, val controller: Controller) : JFrame(), KeyListener {
+    private val viewWorld: Drawer = Drawer(controller.world, 1024, 768)
     init {
         viewWorld.isVisible = true
     }
@@ -33,10 +33,10 @@ class View(private val nameOfFrame: String, private val controller: Controller) 
             return
         }
         when (e.keyCode) {
-            KeyEvent.VK_RIGHT -> controller.move(Move.Direction.right)
-            KeyEvent.VK_LEFT -> controller.move(Move.Direction.left)
-            KeyEvent.VK_UP -> controller.move(Move.Direction.up)
-            KeyEvent.VK_DOWN -> controller.move(Move.Direction.down)
+            KeyEvent.VK_RIGHT -> controller.move(Move.Direction.RIGHT)
+            KeyEvent.VK_LEFT -> controller.move(Move.Direction.LEFT)
+            KeyEvent.VK_UP -> controller.move(Move.Direction.UP)
+            KeyEvent.VK_DOWN -> controller.move(Move.Direction.DOWN)
             KeyEvent.VK_SPACE -> controller.shoot()
             KeyEvent.VK_ESCAPE -> controller.exit()
         }

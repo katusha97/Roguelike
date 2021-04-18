@@ -1,10 +1,10 @@
 package client.controller
 
 import common.protocol.commands.Move
-import common.model.World
+import common.model.WorldProposal
 
 interface Controller {
-    val world: World
+    var world: WorldProposal
     fun move(direction: Move.Direction)
     fun shoot()
     fun pause()

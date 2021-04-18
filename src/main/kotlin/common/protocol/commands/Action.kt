@@ -1,6 +1,5 @@
 package common.protocol.commands
 
-import common.model.World
 import common.model.WorldProposal
 import kotlinx.serialization.Serializable
 
@@ -23,19 +22,19 @@ class Move(private val direction: Direction): Action() {
         var x = currWorld.player.x
         var y = currWorld.player.y
         when (direction) {
-            Direction.left -> x -= 1
-            Direction.right -> x += 1
-            Direction.up -> y += 1
-            Direction.down -> y -= 1
+            Direction.LEFT -> x -= 1
+            Direction.RIGHT -> x += 1
+            Direction.UP -> y += 1
+            Direction.DOWN -> y -= 1
         }
         currWorld.player.move(x, y)
     }
 
     enum class Direction {
-        right,
-        left,
-        up,
-        down
+        RIGHT,
+        LEFT,
+        UP,
+        DOWN
     }
 }
 
