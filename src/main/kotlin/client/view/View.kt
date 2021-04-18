@@ -6,13 +6,11 @@ import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
 import javax.swing.JFrame
 
-class View(private val nameOfFrame: String, val controller: Controller) : JFrame(), KeyListener {
-    private val viewWorld: Drawer = Drawer(controller.world, 1024, 768)
-    init {
-        viewWorld.isVisible = true
-    }
+class View(private val nameOfFrame: String, private var controller: Controller) : JFrame(), KeyListener {
+    private var viewWorld: Drawer = Drawer(controller)
 
     init {
+        viewWorld.isVisible = true
         createUI()
     }
 
