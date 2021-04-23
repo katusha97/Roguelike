@@ -1,9 +1,7 @@
 package server.engine
 
-import common.model.LevelStaticMap
-import common.model.Player
-import common.model.StoneItemProposal
-import common.model.World
+import common.model.*
+import common.protocol.commands.Move
 
 class WorldGenerator(private val sizeX: Int, private val sizeY: Int) {
     init {
@@ -12,7 +10,7 @@ class WorldGenerator(private val sizeX: Int, private val sizeY: Int) {
 
     data class Point(val x: Int, val y: Int)
 
-    fun generate(): World {
+    fun generateWorld(): World {
         val stones = generateStones()
 
         return World(
@@ -23,8 +21,54 @@ class WorldGenerator(private val sizeX: Int, private val sizeY: Int) {
                 sizeX,
                 sizeY
             ),
-            Player(2, 2, 100)
+            generatePlayer(), generateBot(stones)
         )
+    }
+
+    private fun generatePlayer(): Player {
+        return Player(2, 2, 100)
+    }
+
+    private fun generateBot(stones: Set<Point>): List<MovableGameObject> {
+        //тут надо в зависимости от уровня генерировать больше или меньше ботов
+        //сейчас просто сделаю для примера несколько
+        val list = ArrayList<MovableGameObject>()
+        val random = java.util.Random()
+        var countActive = 0
+        var countPassive = 0
+        while (countActive != 5) {
+            val x = random.ints(1, 2, sizeX ).sum()
+            val y = random.ints(1, 2, sizeY).sum()
+            if (!stones.any { it.x == x && it.y == y } && x != 2 && y != 2) {
+                list.add(
+                    ActiveAngryBot(
+                        x,
+                        y,
+                        100,
+                        10,
+                        arrayListOf(Move(Move.Direction.RIGHT), Move(Move.Direction.RIGHT))
+                    )
+                )
+                countActive++
+            }
+        }
+        while (countPassive != 5) {
+            val x = random.ints(1, 2, sizeX).sum()
+            val y = random.ints(1, 2, sizeY).sum()
+            if (!stones.any { it.x == x && it.y == y } && x != 2 && y != 2) {
+                list.add(
+                    PassiveAngryBot(
+                        x,
+                        y,
+                        100,
+                        10,
+                        arrayListOf(Move(Move.Direction.LEFT), Move(Move.Direction.LEFT))
+                    )
+                )
+                countPassive++
+            }
+        }
+        return list
     }
 
     private fun neighbours(point: Point) =

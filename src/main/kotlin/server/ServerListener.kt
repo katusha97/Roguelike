@@ -13,7 +13,7 @@ class ServerListener(private val communication: SocketWrapper): Thread() {
         log("Client connected with ${communication.host}:${communication.port}")
 
         val gen = WorldGenerator(21, 21)
-        val world = gen.generate()
+        val world = gen.generateWorld()
         log("World map has generated")
 
         protocol.sendInitializeWorld(world)

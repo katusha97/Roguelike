@@ -1,5 +1,6 @@
 package common.model
 
+import common.protocol.commands.Action
 import kotlinx.serialization.Serializable
 
 interface GameObject {
@@ -11,7 +12,7 @@ interface GameObject {
 sealed class StaticGameObject : GameObject
 
 @Serializable
-sealed class MovableGameObject: GameObject {
+sealed class MovableGameObject : GameObject {
     protected abstract var posX: Int
     protected abstract var posY: Int
 
@@ -32,3 +33,14 @@ class StoneItemProposal(override val x: Int, override val y: Int) : StaticGameOb
 @Serializable
 class Player(override var posX: Int, override var posY: Int, var health: Int) : MovableGameObject()
 
+@Serializable
+class ActiveAngryBot(
+    override var posX: Int, override var posY: Int,
+    var health: Int, val power: Int, val strategy: List<Action>
+) : MovableGameObject()
+
+@Serializable
+class PassiveAngryBot(
+    override var posX: Int, override var posY: Int,
+    var health: Int, val power: Int, val strategy: List<Action>
+) : MovableGameObject()
