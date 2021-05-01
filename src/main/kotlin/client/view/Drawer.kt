@@ -30,10 +30,6 @@ class Drawer(private var world: World): JPanel() {
 
     private fun drawBots(bots: List<MovableGameObject>, g: Graphics) {
         for (bot in bots) {
-            for (l in bots) {
-                println("${l.x} ${l.y}")
-                println()
-            }
             val startY = sizeRect * world.map.sizeY + 50
             val currX = (bot.x - 1) * sizeRect + startX + (sizeRect / 2 - sizePlayer / 2)
             val currY = startY - (bot.y - 2) * sizeRect - (sizeRect / 2 + sizePlayer / 2)

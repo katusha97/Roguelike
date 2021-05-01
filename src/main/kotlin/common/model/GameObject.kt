@@ -36,11 +36,9 @@ class Player(override var posX: Int, override var posY: Int, var health: Int) : 
 @Serializable
 class ActiveAngryBot(
     override var posX: Int, override var posY: Int,
-    var health: Int, val power: Int, val strategy: List<Action>
-) : MovableGameObject()
+    var health: Int, val power: Int) : MovableGameObject()
 
 @Serializable
 class PassiveAngryBot(
     override var posX: Int, override var posY: Int,
-    var health: Int, val power: Int, val strategy: List<Action>
-) : MovableGameObject()
+    var health: Int, val power: Int) : MovableGameObject()

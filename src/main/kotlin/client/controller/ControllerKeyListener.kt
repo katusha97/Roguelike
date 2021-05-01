@@ -6,7 +6,6 @@ import java.awt.event.KeyListener
 
 class ControllerKeyListener(private val controller: Controller) : KeyListener {
     override fun keyTyped(p0: KeyEvent?) {
-
     }
 
     override fun keyPressed(e: KeyEvent?) {
@@ -24,6 +23,5 @@ class ControllerKeyListener(private val controller: Controller) : KeyListener {
     }
 
     override fun keyReleased(p0: KeyEvent?) {
-
     }
 }

@@ -45,8 +45,7 @@ class WorldGenerator(private val sizeX: Int, private val sizeY: Int) {
                         x,
                         y,
                         100,
-                        10,
-                        arrayListOf(Move(Move.Direction.RIGHT), Move(Move.Direction.RIGHT))
+                        10
                     )
                 )
                 countActive++
@@ -61,8 +60,7 @@ class WorldGenerator(private val sizeX: Int, private val sizeY: Int) {
                         x,
                         y,
                         100,
-                        10,
-                        arrayListOf(Move(Move.Direction.LEFT), Move(Move.Direction.LEFT))
+                        10
                     )
                 )
                 countPassive++
