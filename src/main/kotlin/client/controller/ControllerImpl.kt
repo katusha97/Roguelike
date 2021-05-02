@@ -1,24 +1,22 @@
 package client.controller
 
-import common.protocol.commands.Exit
-import common.protocol.commands.Move
-import common.protocol.commands.Shoot
 import common.protocol.ClientProtocol
+import common.protocol.commands.*
 import utils.SocketWrapper
 
 class ControllerImpl(communication: SocketWrapper) : Controller {
     private val protocol = ClientProtocol(communication)
 
-    override fun move(direction: Move.Direction) {
-        protocol.sendAction(Move(direction))
+    override fun move(direction: Direction) {
+        protocol.sendAction(MoveFromPlayer(direction))
     }
 
     override fun shoot() {
-        protocol.sendAction(Shoot())
+        protocol.sendAction(ShootFromPlayer())
     }
 
     override fun exit() {
-        protocol.sendAction(Exit())
+        protocol.sendAction(ExitFromPlayer())
     }
 
     override fun pause() {

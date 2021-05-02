@@ -5,7 +5,7 @@ import common.protocol.commands.*
 import utils.SocketWrapper
 
 class ClientProtocol(communication: SocketWrapper): ProtocolBase(communication) {
-    fun sendAction(action: Action) {
+    fun sendAction(action: ActionPlayer) {
         send(ActionRequest(action))
     }
 

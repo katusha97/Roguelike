@@ -22,4 +22,4 @@ class ExitAccept : ServerCommand()
 sealed class ClientCommand : Command()
 
 @Serializable
-class ActionRequest(val action: Action): ClientCommand()
+class ActionRequest(val action: ActionPlayer): ClientCommand()

@@ -23,12 +23,14 @@ class ServerListener(private val communication: SocketWrapper): Thread() {
             val action = protocol.readAction()
 
             when (action) {
-                is Exit -> {
+                is ExitFromPlayer -> {
                     log("Stop working with client")
                     protocol.sendServerCommand(ExitAccept())
                     break
                 } else -> {
-                    action.execute(world)
+                    //  Вот здесть уже не знаю как будет логика реализовываться, потому что в командах
+                    // ...FromPlayer нет execute()
+//                    action.execute(world)
                     protocol.sendServerCommand(UpdateWorld(world))
                 }
             }

@@ -24,31 +24,34 @@ class Drawer(private var world: World): JPanel() {
 
     private fun draw(g: Graphics) {
         drawPlan(world.map, g)
-        drawPlayer(world.player, g)
-        drawBots(world.bots, g)
+        drawPlayer(world.players, g)
     }
 
-    private fun drawBots(bots: List<MovableGameObject>, g: Graphics) {
-        for (bot in bots) {
+    private fun drawPlayer(players: List<MovableGameObject>, g: Graphics) {
+        for (player in players) {
             val startY = sizeRect * world.map.sizeY + 50
-            val currX = (bot.x - 1) * sizeRect + startX + (sizeRect / 2 - sizePlayer / 2)
-            val currY = startY - (bot.y - 2) * sizeRect - (sizeRect / 2 + sizePlayer / 2)
-            if (bot is ActiveAngryBot) {
+            val currX = (player.x - 1) * sizeRect + startX + (sizeRect / 2 - sizePlayer / 2)
+            val currY = startY - (player.y - 2) * sizeRect - (sizeRect / 2 + sizePlayer / 2)
+            if (player is Player) {
+                g.color = Color.RED
+                g.fillOval(currX, currY, sizePlayer, sizePlayer)
+            }
+            if (player is ActiveAngryBot) {
                 g.color = Color.ORANGE
-            } else if (bot is PassiveAngryBot) {
+            } else if (player is PassiveAngryBot) {
                 g.color = Color.GREEN
             }
             g.fillOval(currX, currY, sizePlayer, sizePlayer)
         }
     }
 
-    private fun drawPlayer(player: Player, g: Graphics) {
-        val startY = sizeRect * world.map.sizeY + 50
-        val currX = (player.x - 1) * sizeRect + startX + (sizeRect / 2 - sizePlayer / 2)
-        val currY = startY - (player.y - 2) * sizeRect - (sizeRect / 2 + sizePlayer / 2)
-        g.color = Color.RED
-        g.fillOval(currX, currY, sizePlayer, sizePlayer)
-    }
+//    private fun drawPlayer(player: Player, g: Graphics) {
+//        val startY = sizeRect * world.map.sizeY + 50
+//        val currX = (player.x - 1) * sizeRect + startX + (sizeRect / 2 - sizePlayer / 2)
+//        val currY = startY - (player.y - 2) * sizeRect - (sizeRect / 2 + sizePlayer / 2)
+//        g.color = Color.RED
+//        g.fillOval(currX, currY, sizePlayer, sizePlayer)
+//    }
 
     private fun drawPlan(map: LevelStaticMap, g: Graphics) {
         val startY = sizeRect * world.map.sizeY + 50

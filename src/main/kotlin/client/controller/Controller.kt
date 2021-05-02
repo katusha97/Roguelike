@@ -1,9 +1,9 @@
 package client.controller
 
-import common.protocol.commands.Move
+import common.protocol.commands.Direction
 
 interface Controller {
-    fun move(direction: Move.Direction)
+    fun move(direction: Direction)
     fun shoot()
     fun pause()
     fun save()

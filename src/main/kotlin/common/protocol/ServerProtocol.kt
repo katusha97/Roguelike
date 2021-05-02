@@ -21,7 +21,7 @@ class ServerProtocol(communication: SocketWrapper): ProtocolBase(communication) 
         send(ExitAccept())
     }
 
-    fun readAction(): Action {
+    fun readAction(): ActionPlayer {
         val actionRequest = read<ActionRequest>()
         return actionRequest.action
     }

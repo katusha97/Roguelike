@@ -4,7 +4,7 @@ import common.model.World
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class Action {
+sealed class ActionServer {
 
     abstract fun getName(): String
 
@@ -12,39 +12,33 @@ sealed class Action {
 }
 
 @Serializable
-class Move(private val direction: Direction): Action() {
+class Move(private val direction: Direction): ActionServer() {
 
     override fun getName(): String {
         return "move"
     }
 
     override fun execute(currWorld: World) {
-        var x = currWorld.player.x
-        var y = currWorld.player.y
-        when (direction) {
-            Direction.LEFT -> x -= 1
-            Direction.RIGHT -> x += 1
-            Direction.UP -> y += 1
-            Direction.DOWN -> y -= 1
-        }
-
-        // TODO: Improve game object to stop this trash
-        if (!currWorld.map.stones.any { it.x == x && it.y == y }) {
-            currWorld.player.move(x, y)
-        }
-    }
-
-    enum class Direction {
-        RIGHT,
-        LEFT,
-        UP,
-        DOWN
+        // тут нужно как-то использовать id
+//        var x = currWorld.player.x
+//        var y = currWorld.player.y
+//        when (direction) {
+//            Direction.LEFT -> x -= 1
+//            Direction.RIGHT -> x += 1
+//            Direction.UP -> y += 1
+//            Direction.DOWN -> y -= 1
+//        }
+//
+//        // TODO: Improve game object to stop this trash
+//        if (!currWorld.map.stones.any { it.x == x && it.y == y }) {
+//            currWorld.player.move(x, y)
+//        }
     }
 }
 
 
 @Serializable
-class Shoot: Action() {
+class Shoot: ActionServer() {
 
     override fun getName(): String {
         return "shoot"
@@ -56,7 +50,7 @@ class Shoot: Action() {
 }
 
 @Serializable
-class Exit: Action() {
+class Exit: ActionServer() {
 
     override fun getName(): String {
         return "exit"

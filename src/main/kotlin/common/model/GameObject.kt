@@ -1,6 +1,5 @@
 package common.model
 
-import common.protocol.commands.Action
 import kotlinx.serialization.Serializable
 
 interface GameObject {

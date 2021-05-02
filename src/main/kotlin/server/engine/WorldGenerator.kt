@@ -1,7 +1,6 @@
 package server.engine
 
 import common.model.*
-import common.protocol.commands.Move
 
 class WorldGenerator(private val sizeX: Int, private val sizeY: Int) {
     init {
@@ -21,18 +20,13 @@ class WorldGenerator(private val sizeX: Int, private val sizeY: Int) {
                 sizeX,
                 sizeY
             ),
-            generatePlayer(), generateBot(stones)
+            generatePlayers(stones)
         )
     }
 
-    private fun generatePlayer(): Player {
-        return Player(2, 2, 100)
-    }
-
-    private fun generateBot(stones: Set<Point>): List<MovableGameObject> {
-        //тут надо в зависимости от уровня генерировать больше или меньше ботов
-        //сейчас просто сделаю для примера несколько
+    private fun generatePlayers(stones: Set<Point>): List<MovableGameObject> {
         val list = ArrayList<MovableGameObject>()
+        list.add(Player(2, 2, 100))
         val random = java.util.Random()
         var countActive = 0
         var countPassive = 0
