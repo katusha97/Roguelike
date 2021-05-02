@@ -4,6 +4,7 @@ import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
 import io.ktor.utils.io.jvm.javaio.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
 import utils.ServerSocketWrapper
 import java.net.InetSocketAddress
 
@@ -14,6 +15,11 @@ class Server(private val serverSocket: ServerSocket) {
 
     private fun startImpl() {
         runBlocking {
+            val channel = CommonListener()
+            launch {
+                channel.execute()
+            }
+
             println("Server was started on localhost:${serverSocket.localAddress}. Welcome!")
             try {
                 while (true) {
@@ -22,7 +28,7 @@ class Server(private val serverSocket: ServerSocket) {
                     println("Waiting accepted!")
 
                     val communication = ServerSocketWrapper(accept)
-                    val listener = ServerListener(communication)
+                    val listener = ServerListener(communication, channel)
                     listeners.add(listener)
 
                     launch {

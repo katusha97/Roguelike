@@ -10,8 +10,9 @@ import kotlinx.coroutines.runBlocking
 import server.engine.WorldGenerator
 import utils.ServerSocketWrapper
 
-class ServerListener(private val communication: ServerSocketWrapper) {
+class ServerListener(private val communication: ServerSocketWrapper, private val commonListener: CommonListener) {
     private val protocol = ServerProtocol(communication)
+    private var counter: Int = 0
 
     private suspend fun startCommunicationImpl() {
         log("Client connected with ${communication.host}:${communication.port}")
@@ -21,10 +22,12 @@ class ServerListener(private val communication: ServerSocketWrapper) {
         log("World map has generated")
 
         protocol.sendInitializeWorld(world)
-
         while (true) {
             log("Read action...")
             val action = protocol.readAction()
+            counter += 1
+            commonListener.send(counter)
+            log("commonListener.send")
 
             when (action) {
                 is Exit -> {
