@@ -1,36 +1,44 @@
 package server
 
-import java.net.ServerSocket
-import utils.SocketWrapper
+import io.ktor.network.selector.*
+import io.ktor.network.sockets.*
+import io.ktor.utils.io.jvm.javaio.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
+import utils.ServerSocketWrapper
+import java.net.InetSocketAddress
 
 class Server(private val serverSocket: ServerSocket) {
-    // Мапа id -> Player
-
     companion object {
         val listeners: MutableList<ServerListener> = mutableListOf()
     }
 
     private fun startImpl() {
-        println("Server was started on localhost:${serverSocket.localPort}. Welcome!")
-        // Создать World
-        try {
-            while (true) {
-                // кто-то подрубается
-                val accept = serverSocket.accept()
-
-                // Регистрация --- нужна только серверу
-                // Новый id
-
-                val communication = SocketWrapper(accept)
-
-
-                // Отдельный
-                val listener = ServerListener(communication /* id игрока */)
-                listeners.add(listener)
-                listener.start()
+        runBlocking {
+            val channel = CommonListener()
+            launch {
+                channel.execute()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
+
+            println("Server was started on localhost:${serverSocket.localAddress}. Welcome!")
+            try {
+                while (true) {
+                    println("Waiting accept...")
+                    val accept = serverSocket.accept()
+                    println("Waiting accepted!")
+
+                    val communication = ServerSocketWrapper(accept)
+                    val listener = ServerListener(communication, channel)
+                    listeners.add(listener)
+
+                    launch {
+                        println("Inside coroutine")
+                        listener.startCommunication()
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -38,6 +46,11 @@ class Server(private val serverSocket: ServerSocket) {
 }
 
 fun main() {
-    val server = Server(ServerSocket(8000))
+    val serverSocket = aSocket(
+        ActorSelectorManager(Dispatchers.IO))
+        .tcp()
+        .bind(InetSocketAddress("127.0.0.1", 8000)
+    )
+    val server = Server(serverSocket)
     server.start()
 }

@@ -2,15 +2,17 @@ package client
 
 import client.view.View
 import common.protocol.ClientProtocol
-import common.protocol.commands.*
-import utils.SocketWrapper
+import common.protocol.commands.ExitAccept
+import common.protocol.commands.UpdateWorld
+import utils.ClientSocketWrapper
 import utils.toStringConsole
 import kotlin.system.exitProcess
 
-class ClientListener(communication: SocketWrapper, private val frame: View): Thread() {
+class ClientListener(communication: ClientSocketWrapper, private val frame: View): Thread() {
     private val protocol = ClientProtocol(communication)
 
     override fun run() {
+        println("Run!")
         var world = protocol.readInitializeWorld()
         frame.updateWorld(world)
 
