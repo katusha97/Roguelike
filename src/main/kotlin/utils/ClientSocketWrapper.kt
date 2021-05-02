@@ -4,7 +4,7 @@ import java.io.*
 import java.net.InetAddress
 import java.net.Socket
 
-class SocketWrapper(val socket: Socket) {
+class ClientSocketWrapper(val socket: Socket) {
     private val reader: BufferedReader = createReader()
     private val writer: PrintStream = createWriter()
 

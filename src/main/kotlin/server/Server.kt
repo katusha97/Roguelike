@@ -1,7 +1,11 @@
 package server
 
-import java.net.ServerSocket
-import utils.SocketWrapper
+import io.ktor.network.selector.*
+import io.ktor.network.sockets.*
+import io.ktor.utils.io.jvm.javaio.*
+import kotlinx.coroutines.*
+import utils.ServerSocketWrapper
+import java.net.InetSocketAddress
 
 class Server(private val serverSocket: ServerSocket) {
     companion object {
@@ -9,18 +13,26 @@ class Server(private val serverSocket: ServerSocket) {
     }
 
     private fun startImpl() {
-        println("Server was started on localhost:${serverSocket.localPort}. Welcome!")
-        try {
-            while (true) {
-                val accept = serverSocket.accept()
-                val communication = SocketWrapper(accept)
+        runBlocking {
+            println("Server was started on localhost:${serverSocket.localAddress}. Welcome!")
+            try {
+                while (true) {
+                    println("Waiting accept...")
+                    val accept = serverSocket.accept()
+                    println("Waiting accepted!")
 
-                val listener = ServerListener(communication)
-                listeners.add(listener)
-                listener.start()
+                    val communication = ServerSocketWrapper(accept)
+                    val listener = ServerListener(communication)
+                    listeners.add(listener)
+
+                    launch {
+                        println("Inside coroutine")
+                        listener.startCommunication()
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 
@@ -28,6 +40,11 @@ class Server(private val serverSocket: ServerSocket) {
 }
 
 fun main() {
-    val server = Server(ServerSocket(8000))
+    val serverSocket = aSocket(
+        ActorSelectorManager(Dispatchers.IO))
+        .tcp()
+        .bind(InetSocketAddress("127.0.0.1", 8000)
+    )
+    val server = Server(serverSocket)
     server.start()
 }

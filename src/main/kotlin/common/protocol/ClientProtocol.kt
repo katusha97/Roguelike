@@ -2,9 +2,31 @@ package common.protocol
 
 import common.model.World
 import common.protocol.commands.*
-import utils.SocketWrapper
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import utils.ClientSocketWrapper
+import java.lang.Exception
 
-class ClientProtocol(communication: SocketWrapper): ProtocolBase(communication) {
+class ClientProtocol(private val communication: ClientSocketWrapper) {
+    private inline fun <reified T: Command> send(command: T) {
+        communication.writeLine(Json.encodeToString(command))
+    }
+
+    private inline fun <reified T: Command> read() : T {
+        val msg: String = try {
+            println("here")
+            communication.readLine()
+        } catch (e: Exception) {
+            throw ClientDisconnectException(
+                "Socket readLine returns null (perhaps client disconnected or server close connection)"
+            )
+        }
+
+        val cmd = Json.decodeFromString<T>(msg)
+        return cmd
+    }
+
     fun sendAction(action: Action) {
         send(ActionRequest(action))
     }

@@ -3,13 +3,17 @@ package server
 import common.protocol.commands.*
 import common.protocol.ClientServerCommunicationException
 import common.protocol.ServerProtocol
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import server.engine.WorldGenerator
-import utils.SocketWrapper
+import utils.ServerSocketWrapper
 
-class ServerListener(private val communication: SocketWrapper): Thread() {
+class ServerListener(private val communication: ServerSocketWrapper) {
     private val protocol = ServerProtocol(communication)
 
-    private fun startCommunication() {
+    private suspend fun startCommunicationImpl() {
         log("Client connected with ${communication.host}:${communication.port}")
 
         val gen = WorldGenerator(21, 21)
@@ -17,9 +21,9 @@ class ServerListener(private val communication: SocketWrapper): Thread() {
         log("World map has generated")
 
         protocol.sendInitializeWorld(world)
-        log("World has sent to client")
 
         while (true) {
+            log("Read action...")
             val action = protocol.readAction()
 
             when (action) {
@@ -35,9 +39,9 @@ class ServerListener(private val communication: SocketWrapper): Thread() {
         }
     }
 
-    override fun run() {
+    suspend fun startCommunication() {
         try {
-            startCommunication()
+            startCommunicationImpl()
         } catch (e: ClientServerCommunicationException) {
             log("Communication ERROR: $e")
         } catch (e: Exception) {

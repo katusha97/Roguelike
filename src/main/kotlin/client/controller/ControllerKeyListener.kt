@@ -1,6 +1,7 @@
 package client.controller
 
 import common.protocol.commands.Move
+import kotlinx.coroutines.runBlocking
 import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
 

@@ -1,12 +1,12 @@
 package client.controller
 
+import common.protocol.ClientProtocol
 import common.protocol.commands.Exit
 import common.protocol.commands.Move
 import common.protocol.commands.Shoot
-import common.protocol.ClientProtocol
-import utils.SocketWrapper
+import utils.ClientSocketWrapper
 
-class ControllerImpl(communication: SocketWrapper) : Controller {
+class ControllerImpl(communication: ClientSocketWrapper) : Controller {
     private val protocol = ClientProtocol(communication)
 
     override fun move(direction: Move.Direction) {
