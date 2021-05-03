@@ -27,7 +27,7 @@ class ClientProtocol(private val communication: ClientSocketWrapper) {
         return cmd
     }
 
-    fun sendAction(action: Action) {
+    fun sendAction(action: ActionPlayer) {
         send(ActionRequest(action))
     }
 

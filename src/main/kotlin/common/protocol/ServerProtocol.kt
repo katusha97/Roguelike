@@ -25,7 +25,7 @@ class ServerProtocol(communication: ServerSocketWrapper): ProtocolBase(communica
         send(ExitAccept())
     }
 
-    suspend fun readAction(): Action {
+    suspend fun readAction(): ActionPlayer {
         val actionRequest = read<ActionRequest>()
         return actionRequest.action
     }

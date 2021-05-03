@@ -2,37 +2,39 @@ package server
 
 import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
-import io.ktor.utils.io.jvm.javaio.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.Channel
+import server.engine.GameEngine
 import utils.ServerSocketWrapper
 import java.net.InetSocketAddress
 
 class Server(private val serverSocket: ServerSocket) {
-    companion object {
-        val listeners: MutableList<ServerListener> = mutableListOf()
-    }
-
     private fun startImpl() {
         runBlocking {
-            val channel = CommonListener()
+            println("Server was started on localhost:${serverSocket.localAddress}. Welcome!")
+
+            val clientNotifier = ClientNotifier()
             launch {
-                channel.execute()
+                clientNotifier.start()
             }
 
-            println("Server was started on localhost:${serverSocket.localAddress}. Welcome!")
+            val gameEngine = GameEngine(clientNotifier)
+            launch {
+                gameEngine.start()
+            }
+
+            var targetUserID = 0
             try {
                 while (true) {
                     println("Waiting accept...")
                     val accept = serverSocket.accept()
-                    println("Waiting accepted!")
+                    targetUserID += 1
+                    println("Accept: user with id $targetUserID connected")
 
                     val communication = ServerSocketWrapper(accept)
-                    val listener = ServerListener(communication, channel)
-                    listeners.add(listener)
+                    clientNotifier.subscribe(communication)
 
+                    val listener = ServerListener(communication, gameEngine, targetUserID)
                     launch {
-                        println("Inside coroutine")
                         listener.startCommunication()
                     }
                 }

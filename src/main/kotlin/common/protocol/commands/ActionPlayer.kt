@@ -8,7 +8,7 @@ sealed class ActionPlayer {
 }
 
 @Serializable
-class MoveFromPlayer(private val direction: Direction): ActionPlayer() {
+class MoveFromPlayer(val direction: Direction): ActionPlayer() {
 
     override fun getName(): String {
         return "move"
