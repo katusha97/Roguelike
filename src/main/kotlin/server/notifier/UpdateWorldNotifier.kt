@@ -1,24 +1,22 @@
-package server
+package server.notifier
 
 import common.model.World
-import common.protocol.ServerProtocol
-import common.protocol.commands.UpdateWorld
 import kotlinx.coroutines.channels.Channel
-import utils.ServerSocketWrapper
 
-class ClientNotifier {
-    private val subscribers = mutableListOf<ServerProtocol>()
+// Publisher --- сообщает всем подписчикам об изменении мира.
+class UpdateWorldNotifier {
+    private val subscribers = mutableListOf<ISubscriber>()
     private val channel = Channel<World>()
 
-    private fun notifySubscribers(world: World) {
+    private suspend fun notifySubscribers(world: World) {
         for (s in subscribers) {
-            s.sendUpdateWorld(world)
+            s.update(world)
         }
     }
 
     // Вызывается из других корутин
-    fun subscribe(socket: ServerSocketWrapper) {
-        subscribers.add(ServerProtocol(socket))
+    fun subscribe(s: ISubscriber) {
+        subscribers.add(s)
     }
 
     // Вызывается из других корутин (из GameEngine)

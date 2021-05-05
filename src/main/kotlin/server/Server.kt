@@ -3,7 +3,10 @@ package server
 import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
 import kotlinx.coroutines.*
+import server.engine.BotController
 import server.engine.GameEngine
+import server.notifier.ClientSubscriber
+import server.notifier.UpdateWorldNotifier
 import utils.ServerSocketWrapper
 import java.net.InetSocketAddress
 
@@ -12,7 +15,9 @@ class Server(private val serverSocket: ServerSocket) {
         runBlocking {
             println("Server was started on localhost:${serverSocket.localAddress}. Welcome!")
 
-            val clientNotifier = ClientNotifier()
+            val register = PlayerRegister()
+
+            val clientNotifier = UpdateWorldNotifier()
             launch {
                 clientNotifier.start()
             }
@@ -22,16 +27,24 @@ class Server(private val serverSocket: ServerSocket) {
                 gameEngine.start()
             }
 
-            var targetUserID = 0
+            // Создаём ботов
+            repeat(5) {
+                val newBotId = register.getNewId()
+                val bot = BotController(newBotId, gameEngine)
+                launch {
+                    bot.start()
+                }
+            }
+
             try {
                 while (true) {
                     println("Waiting accept...")
                     val accept = serverSocket.accept()
-                    targetUserID += 1
+                    val targetUserID = register.getNewId()
                     println("Accept: user with id $targetUserID connected")
 
                     val communication = ServerSocketWrapper(accept)
-                    clientNotifier.subscribe(communication)
+                    clientNotifier.subscribe(ClientSubscriber(communication))
 
                     val listener = ServerListener(communication, gameEngine, targetUserID)
                     launch {

@@ -1,9 +1,9 @@
 package client.controller
 
 import common.protocol.commands.Direction
-import server.engine.Move
-import kotlinx.coroutines.*
-import kotlin.random.Random
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.runBlocking
 
 class ControllerBotListener(private val controller: Controller) {
     fun loop() {

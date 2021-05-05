@@ -2,11 +2,21 @@ package server.engine
 
 import common.model.World
 import kotlinx.coroutines.channels.Channel
-import server.ClientNotifier
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import server.notifier.UpdateWorldNotifier
 
-class GameEngine(private val clientNotifier: ClientNotifier) {
+class GameEngine(private val clientNotifier: UpdateWorldNotifier) {
+    private val worldMutex = Mutex()
     private val world: World = WorldGenerator(21, 21).generateWorld()
+
     private val channel = Channel<GameAction>()
+
+    suspend fun getWorld(): World {
+        worldMutex.withLock {
+            return world
+        }
+    }
 
     // Вызывается из других корутин
     suspend fun execute(cmd: GameAction) {
@@ -19,7 +29,9 @@ class GameEngine(private val clientNotifier: ClientNotifier) {
             val cmd = channel.receive()
             println("Game Engine receive cmd: $cmd")
 
-            cmd.execute(world)
+            worldMutex.withLock {
+                cmd.execute(world)
+            }
             clientNotifier.updateWorld(world)
         }
     }
