@@ -31,6 +31,7 @@ class Server(private val serverSocket: ServerSocket) {
             repeat(5) {
                 val newBotId = register.getNewId()
                 val bot = BotController(newBotId, gameEngine)
+                clientNotifier.subscribe(bot)
                 launch {
                     bot.start()
                 }
@@ -44,6 +45,7 @@ class Server(private val serverSocket: ServerSocket) {
                     println("Accept: user with id $targetUserID connected")
 
                     val communication = ServerSocketWrapper(accept)
+
                     clientNotifier.subscribe(ClientSubscriber(communication))
 
                     val listener = ServerListener(communication, gameEngine, targetUserID)
