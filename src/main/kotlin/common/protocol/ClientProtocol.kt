@@ -1,5 +1,6 @@
 package common.protocol
 
+import common.model.Id
 import common.model.World
 import common.protocol.commands.*
 import kotlinx.serialization.decodeFromString
@@ -44,5 +45,10 @@ class ClientProtocol(private val communication: ClientSocketWrapper) {
     fun readUpdateWorld(): World {
         val updateWorldRequest = read<UpdateWorld>()
         return updateWorldRequest.world
+    }
+
+    fun readClientId(): Id {
+        val readClientId = read<SendIdToClient>()
+        return readClientId.id
     }
 }

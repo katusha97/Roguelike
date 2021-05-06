@@ -10,6 +10,7 @@ class Drawer(private var world: World): JPanel() {
     private val sizeRect = 30
     private val sizePlayer = 20
     private val startX = 50
+    private var id = -1
 
     override fun paintComponent(g: Graphics?) {
         super.paintComponent(g)
@@ -18,8 +19,9 @@ class Drawer(private var world: World): JPanel() {
         }
     }
 
-    fun updateWorld(newWorld: World) {
+    fun updateWorld(newWorld: World, myId: Int) {
         world = newWorld
+        id = myId
     }
 
     private fun draw(g: Graphics) {
@@ -32,26 +34,15 @@ class Drawer(private var world: World): JPanel() {
             val startY = sizeRect * world.map.sizeY + 50
             val currX = (player.x - 1) * sizeRect + startX + (sizeRect / 2 - sizePlayer / 2)
             val currY = startY - (player.y - 2) * sizeRect - (sizeRect / 2 + sizePlayer / 2)
-            if (player is Player) {
+            if (player.id == id) {
                 g.color = Color.RED
-                g.fillOval(currX, currY, sizePlayer, sizePlayer)
             }
-            if (player is ActiveAngryBot) {
-                g.color = Color.ORANGE
-            } else if (player is PassiveAngryBot) {
+            else {
                 g.color = Color.GREEN
             }
             g.fillOval(currX, currY, sizePlayer, sizePlayer)
         }
     }
-
-//    private fun drawPlayer(player: Player, g: Graphics) {
-//        val startY = sizeRect * world.map.sizeY + 50
-//        val currX = (player.x - 1) * sizeRect + startX + (sizeRect / 2 - sizePlayer / 2)
-//        val currY = startY - (player.y - 2) * sizeRect - (sizeRect / 2 + sizePlayer / 2)
-//        g.color = Color.RED
-//        g.fillOval(currX, currY, sizePlayer, sizePlayer)
-//    }
 
     private fun drawPlan(map: LevelStaticMap, g: Graphics) {
         val startY = sizeRect * world.map.sizeY + 50

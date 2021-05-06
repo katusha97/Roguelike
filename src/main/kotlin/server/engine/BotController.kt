@@ -34,7 +34,7 @@ class BotController(private val id: Int, private val gameEngine: GameEngine): IS
 
         var prevDirection: Direction = Direction.LEFT
         while (true) {
-            delay(100)
+            delay(1000)
             val world = getWorld()
 
             val bot = world.players[id] ?: throw Exception("TODO")

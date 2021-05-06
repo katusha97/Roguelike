@@ -1,5 +1,7 @@
 package server
 
+import common.model.Id
+import common.protocol.ServerProtocol
 import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
 import kotlinx.coroutines.*
@@ -45,7 +47,8 @@ class Server(private val serverSocket: ServerSocket) {
                     println("Accept: user with id $targetUserID connected")
 
                     val communication = ServerSocketWrapper(accept)
-
+                    val protocol = ServerProtocol(communication)
+                    protocol.sendClientId(Id(targetUserID))
                     clientNotifier.subscribe(ClientSubscriber(communication))
 
                     val listener = ServerListener(communication, gameEngine, targetUserID)

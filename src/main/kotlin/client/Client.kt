@@ -16,6 +16,6 @@ fun main() {
     val keyboardListener = ControllerKeyListener(controller)
     frame.addKeyListener(keyboardListener)
 
-    val listener = ClientListener(socket, frame)
+    val listener = ClientListener(socket, frame);
     listener.run()
 }

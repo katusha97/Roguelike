@@ -12,8 +12,8 @@ class View(private val nameOfFrame: String, world: World) : JFrame() {
         createUI()
     }
 
-    fun updateWorld(newWorld: World) {
-        viewWorld.updateWorld(newWorld)
+    fun updateWorld(newWorld: World, myId: Int) {
+        viewWorld.updateWorld(newWorld, myId)
         repaint()
     }
 

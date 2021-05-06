@@ -13,7 +13,7 @@ sealed class GameAction {
 
 class CreatePlayer(val id: Int, posX: Int = 2, posY: Int = 2): GameAction() {
     override fun execute(world: World) {
-        val player = Player(2, 2, 100)
+        val player = Player(2, 2, 100, id)
         world.players[id] = player
     }
 }

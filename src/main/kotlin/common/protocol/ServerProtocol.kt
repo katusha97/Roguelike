@@ -1,5 +1,6 @@
 package common.protocol
 
+import common.model.Id
 import common.model.World
 import common.protocol.commands.*
 import io.ktor.utils.io.*
@@ -15,6 +16,10 @@ class ServerProtocol(communication: ServerSocketWrapper): ProtocolBase(communica
 
     fun sendUpdateWorld(world: World) {
         send(UpdateWorld(world))
+    }
+
+    fun sendClientId(id: Id) {
+        send(SendIdToClient(id))
     }
 
     fun sendInitializeWorld(world: World) {
