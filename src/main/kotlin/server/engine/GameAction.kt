@@ -1,8 +1,6 @@
 package server.engine
 
-import common.model.MovableGameObject
-import common.model.Player
-import common.model.World
+import common.model.*
 import common.protocol.commands.Direction
 
 sealed class GameAction {
@@ -11,15 +9,34 @@ sealed class GameAction {
     abstract fun execute(world: World)
 }
 
-class CreatePlayer(val id: Int, posX: Int = 2, posY: Int = 2): GameAction() {
+class CreatePlayer(val id: Int, posX: Int = 2, posY: Int = 2) : GameAction() {
     override fun execute(world: World) {
         val player = Player(2, 2, 100, id)
         world.players[id] = player
     }
 }
 
+class CreateBot(val id: Int) : GameAction() {
+    override fun execute(world: World) {
+        val randomForCoord = java.util.Random()
+        var x = randomForCoord.ints(1, 2, world.map.sizeX).sum()
+        var y = randomForCoord.ints(1, 2, world.map.sizeY).sum()
+        while (world.map.stones.any { it.x == x && it.y == y } || (x == 2 && y == 2)) {
+            x = randomForCoord.ints(1, 2, world.map.sizeX).sum()
+            y = randomForCoord.ints(1, 2, world.map.sizeY).sum()
+        }
+        val randomForChooseKind = java.util.Random()
+        val r = randomForChooseKind.ints(1, 0, 100).sum()
+        if (r <= 40) {
+            world.players[id] = PassiveAngryBot(x, y, 100, 10, id)
+        } else {
+            world.players[id] = ActiveAngryBot(x, y, 100, 10, id)
+        }
+    }
+}
 
-class Move(private val playerID: Int, private val direction: Direction): GameAction() {
+
+class Move(private val playerID: Int, private val direction: Direction) : GameAction() {
     override fun getName(): String {
         return "move"
     }
@@ -43,7 +60,7 @@ class Move(private val playerID: Int, private val direction: Direction): GameAct
     }
 }
 
-class Shoot: GameAction() {
+class Shoot : GameAction() {
 
     override fun getName(): String {
         return "shoot"
@@ -54,7 +71,7 @@ class Shoot: GameAction() {
     }
 }
 
-class Exit: GameAction() {
+class Exit : GameAction() {
     override fun getName(): String {
         return "exit"
     }

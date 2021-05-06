@@ -1,5 +1,7 @@
 package server.engine
 
+import common.model.ActiveAngryBot
+import common.model.PassiveAngryBot
 import common.model.World
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.sync.Mutex

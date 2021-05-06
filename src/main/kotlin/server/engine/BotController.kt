@@ -27,11 +27,10 @@ class BotController(private val id: Int, private val gameEngine: GameEngine): IS
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    suspend fun start() {
+    suspend fun start(id: Int) {
         currentWorld = gameEngine.getWorld()
 
-        gameEngine.execute(CreatePlayer(id))
-
+        gameEngine.execute(CreateBot(id))
         var prevDirection: Direction = Direction.LEFT
         while (true) {
             delay(1000)

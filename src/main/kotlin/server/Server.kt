@@ -30,12 +30,12 @@ class Server(private val serverSocket: ServerSocket) {
             }
 
             // Создаём ботов
-            repeat(5) {
+            repeat(10) {
                 val newBotId = register.getNewId()
                 val bot = BotController(newBotId, gameEngine)
                 clientNotifier.subscribe(bot)
                 launch {
-                    bot.start()
+                    bot.start(newBotId)
                 }
             }
 
