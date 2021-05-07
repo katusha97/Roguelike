@@ -1,39 +1,22 @@
 package server.engine
 
-import common.model.StaticGameObject
-import common.model.StoneItemProposal
 import common.model.World
 import common.protocol.commands.Direction
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
-import server.notifier.ISubscriber
 
-class BotController(private val id: Int, private val gameEngine: GameEngine): ISubscriber {
-    private lateinit var currentWorld: World
-    private val mutex = Mutex()
-
-    override suspend fun update(world: World) {
-        mutex.withLock {
-            currentWorld = world
-        }
-    }
-
-
+class BotController(private val id: Int, private val gameEngine: GameEngine) {
     private suspend fun getWorld(): World {
-        mutex.withLock {
-            return currentWorld
-        }
+        val worldRequest = GetWorld()
+        gameEngine.request(worldRequest)
+        return worldRequest.await()
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
-    suspend fun start(id: Int) {
-        currentWorld = gameEngine.getWorld()
-
-        gameEngine.execute(CreateBot(id))
+    suspend fun start() {
+        gameEngine.request(CreateBot(id))
         var prevDirection: Direction = Direction.LEFT
+
         while (true) {
-            delay(1000)
+            delay(500)
             val world = getWorld()
 
             val bot = world.players[id] ?: throw Exception("TODO")
@@ -44,7 +27,6 @@ class BotController(private val id: Int, private val gameEngine: GameEngine): IS
                         val y = it.first.y
                         // TODO: 1) Make stones hash table (x, y) -> Cell
                         !world.map.stones.any { it.x == x && it.y == y }
-                        // TODO: 2) Make check, that other player (bot) not in cell
                     }
                     .map { it.second }
                     .toMutableList()
@@ -54,7 +36,7 @@ class BotController(private val id: Int, private val gameEngine: GameEngine): IS
 
             val direction = freeDirections.random()
             prevDirection = direction
-            gameEngine.execute(Move(id, direction))
+            gameEngine.request(Move(id, direction))
         }
     }
 }

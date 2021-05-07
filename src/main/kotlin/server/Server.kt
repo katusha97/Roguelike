@@ -19,23 +19,22 @@ class Server(private val serverSocket: ServerSocket) {
 
             val register = PlayerRegister()
 
-            val clientNotifier = UpdateWorldNotifier()
-            launch {
-                clientNotifier.start()
-            }
-
-            val gameEngine = GameEngine(clientNotifier)
+            val gameEngine = GameEngine()
             launch {
                 gameEngine.start()
             }
 
+            val clientNotifier = UpdateWorldNotifier(gameEngine)
+            launch {
+                clientNotifier.start()
+            }
+
             // Создаём ботов
-            repeat(10) {
+            repeat(8) {
                 val newBotId = register.getNewId()
                 val bot = BotController(newBotId, gameEngine)
-                clientNotifier.subscribe(bot)
                 launch {
-                    bot.start(newBotId)
+                    bot.start()
                 }
             }
 

@@ -6,7 +6,6 @@ import common.protocol.ServerProtocol
 import server.engine.CreatePlayer
 import server.engine.GameEngine
 import server.engine.Move
-import server.engine.WorldGenerator
 import utils.ServerSocketWrapper
 
 class ServerListener(private val communication: ServerSocketWrapper, private val gameEngine: GameEngine, private val id: Int) {
@@ -15,7 +14,7 @@ class ServerListener(private val communication: ServerSocketWrapper, private val
 
     private suspend fun startCommunicationImpl() {
         log("Client connected with ${communication.host}:${communication.port}")
-        gameEngine.execute(CreatePlayer(id))
+        gameEngine.request(CreatePlayer(id))
 
         while (true) {
             log("Read action...")
@@ -23,7 +22,7 @@ class ServerListener(private val communication: ServerSocketWrapper, private val
 
             when (action) {
                 is MoveFromPlayer -> {
-                    gameEngine.execute(Move(id, action.direction))
+                    gameEngine.request(Move(id, action.direction))
                 }
                 else -> {
                     log("Unsupported action: $action")

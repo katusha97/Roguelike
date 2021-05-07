@@ -2,16 +2,31 @@ package server.engine
 
 import common.model.*
 import common.protocol.commands.Direction
+import kotlinx.coroutines.CompletableDeferred
 
-sealed class GameAction {
+sealed class GameEngineRequest
+
+class GetWorld : GameEngineRequest() {
+    private val response = CompletableDeferred<World>()
+
+    fun complete(world: World): Boolean {
+        return response.complete(world)
+    }
+
+    suspend fun await(): World {
+        return response.await()
+    }
+}
+
+sealed class GameAction: GameEngineRequest() {
     open fun getName() = this.javaClass.name
 
     abstract fun execute(world: World)
 }
 
-class CreatePlayer(val id: Int, posX: Int = 2, posY: Int = 2) : GameAction() {
+class CreatePlayer(val id: Int, private val posX: Int = 2, private val posY: Int = 2) : GameAction() {
     override fun execute(world: World) {
-        val player = Player(2, 2, 100, id)
+        val player = Player(posX, posY, 100, id)
         world.players[id] = player
     }
 }
@@ -66,7 +81,7 @@ class Shoot : GameAction() {
         return "shoot"
     }
 
-    override fun execute(currWorld: World) {
+    override fun execute(world: World) {
         TODO("Not yet implemented")
     }
 }
@@ -76,7 +91,7 @@ class Exit : GameAction() {
         return "exit"
     }
 
-    override fun execute(currWorld: World) {
+    override fun execute(world: World) {
         TODO("Not yet implemented")
     }
 }

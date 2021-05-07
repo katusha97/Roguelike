@@ -19,7 +19,7 @@ class View(private val nameOfFrame: String, world: World) : JFrame() {
 
     private fun createUI() {
         title = nameOfFrame
-        setSize(1024, 768)
+        setSize(1024, 1024)
         add(viewWorld)
     }
 }
