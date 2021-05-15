@@ -18,7 +18,7 @@ class GetWorld : GameEngineRequest() {
     }
 }
 
-sealed class GameAction: GameEngineRequest() {
+sealed class GameAction : GameEngineRequest() {
     open fun getName() = this.javaClass.name
 
     abstract fun execute(world: World)
@@ -27,7 +27,11 @@ sealed class GameAction: GameEngineRequest() {
 class CreatePlayer(val id: Int, private val posX: Int = 2, private val posY: Int = 2) : GameAction() {
     override fun execute(world: World) {
         val player = Player(posX, posY, 100, id)
-        world.players[id] = player
+        world.playersById[id] = player
+        if (!world.playersOnMap.containsKey(fromCoords(posX, posY, world))) {
+            world.playersOnMap[fromCoords(posX, posY, world)] = HashSet()
+        }
+        world.playersOnMap[fromCoords(posX, posY, world)]!!.add(player)
     }
 }
 
@@ -42,11 +46,16 @@ class CreateBot(val id: Int) : GameAction() {
         }
         val randomForChooseKind = java.util.Random()
         val r = randomForChooseKind.ints(1, 0, 100).sum()
-        if (r <= 40) {
-            world.players[id] = PassiveAngryBot(x, y, 100, 10, id)
+        val newBot: MovableGameObject = if (r <= 40) {
+            PassiveAngryBot(x, y, 100, 10, id)
         } else {
-            world.players[id] = ActiveAngryBot(x, y, 100, 10, id)
+            ActiveAngryBot(x, y, 100, 10, id)
         }
+        world.playersById[id] = newBot
+        if (!world.playersOnMap.containsKey(fromCoords(x, y, world))) {
+            world.playersOnMap[fromCoords(x, y, world)] = HashSet()
+        }
+        world.playersOnMap[fromCoords(x, y, world)]!!.add(newBot)
     }
 }
 
@@ -57,10 +66,11 @@ class Move(private val playerID: Int, private val direction: Direction) : GameAc
     }
 
     override fun execute(world: World) {
-        val gameObject: MovableGameObject = world.players[playerID] ?: return
-
+        val gameObject: MovableGameObject = world.playersById[playerID] ?: return
         var x = gameObject.x
         var y = gameObject.y
+        val prevX = x
+        val prevY = y
         when (direction) {
             Direction.LEFT -> x -= 1
             Direction.RIGHT -> x += 1
@@ -70,9 +80,26 @@ class Move(private val playerID: Int, private val direction: Direction) : GameAc
 
         // TODO: Improve game object to stop this trash
         if (!world.map.stones.any { it.x == x && it.y == y }) {
+            world.playersOnMap[fromCoords(prevX, prevY, world)]!!.remove(gameObject)
             gameObject.move(x, y)
+            if (gameObject is Player) {
+                if (world.playersOnMap.containsKey(fromCoords(x, y, world))) {
+                    val playerOnThisRect = world.playersOnMap[fromCoords(x, y, world)]
+                    if (playerOnThisRect!!.isNotEmpty()) {
+                        gameObject.health -= 5
+                    }
+                }
+            }
+            if (!world.playersOnMap.containsKey(fromCoords(x, y, world))) {
+                world.playersOnMap[fromCoords(x, y, world)] = HashSet()
+            }
+            world.playersOnMap[fromCoords(x, y, world)]!!.add(gameObject)
         }
     }
+}
+
+fun fromCoords(x: Int, y: Int, world: World): Int {
+    return (y - 1) * world.map.sizeX + x
 }
 
 class Shoot : GameAction() {

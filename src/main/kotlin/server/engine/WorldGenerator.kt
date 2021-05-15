@@ -20,48 +20,8 @@ class WorldGenerator(private val sizeX: Int, private val sizeY: Int) {
                 sizeX,
                 sizeY
             ),
-            generatePlayers(stones)
+            HashMap(), HashMap()
         )
-    }
-
-    private fun generatePlayers(stones: Set<Point>): HashMap<Int, MovableGameObject> {
-        return HashMap()
-//        val list = ArrayList<MovableGameObject>()
-//        list.add(Player(0,2, 2, 100))
-//        val random = java.util.Random()
-//        var countActive = 0
-//        var countPassive = 0
-//        while (countActive != 5) {
-//            val x = random.ints(1, 2, sizeX ).sum()
-//            val y = random.ints(1, 2, sizeY).sum()
-//            if (!stones.any { it.x == x && it.y == y } && x != 2 && y != 2) {
-//                list.add(
-//                    ActiveAngryBot(
-//                        x,
-//                        y,
-//                        100,
-//                        10
-//                    )
-//                )
-//                countActive++
-//            }
-//        }
-//        while (countPassive != 5) {
-//            val x = random.ints(1, 2, sizeX).sum()
-//            val y = random.ints(1, 2, sizeY).sum()
-//            if (!stones.any { it.x == x && it.y == y } && x != 2 && y != 2) {
-//                list.add(
-//                    PassiveAngryBot(
-//                        x,
-//                        y,
-//                        100,
-//                        10
-//                    )
-//                )
-//                countPassive++
-//            }
-//        }
-//        return list
     }
 
     private fun neighbours(point: Point) =

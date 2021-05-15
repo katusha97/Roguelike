@@ -26,7 +26,32 @@ class Drawer(private var world: World): JPanel() {
 
     private fun draw(g: Graphics) {
         drawPlan(world.map, g)
-        drawPlayer(world.players, g)
+        drawPlayer(world.playersById, g)
+        drawHealth(world, g)
+    }
+
+    private fun drawHealth(world: World, g: Graphics) {
+        for (player in world.playersById.values) {
+            if (player.id == id) {
+                g.color = Color.BLACK
+                g.drawString("HEALTH", (world.map.sizeX * sizeRect + 50) / 2, 15)
+                when (player.health) {
+                    in 100 downTo 70 -> {
+                        g.color = Color.GREEN
+                    }
+                    in 70 downTo 30 -> {
+                        g.color = Color.ORANGE
+                    }
+                    else -> {
+                        g.color = Color.RED
+                    }
+                }
+                val x = 50
+                val y = 20
+                g.drawRect(x, y, 800, 25)
+                g.fillRect(x, y, player.health * 8, 25)
+            }
+        }
     }
 
     private fun drawPlayer(players: HashMap<Int, MovableGameObject>, g: Graphics) {
