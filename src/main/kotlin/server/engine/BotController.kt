@@ -24,9 +24,9 @@ class BotController(private val id: Int, private val gameEngine: GameEngine) {
             var direction: Direction
             val currX = bot.x
             val currY = bot.y
-//            if (getDirectionToPlayer(currX, currY, world) != null) {
-//                direction = getDirectionToPlayer(currX, currY, world)!!
-//            } else {
+            if (getDirectionToPlayer(currX, currY, world) != null) {
+                direction = getDirectionToPlayer(currX, currY, world)!!
+            } else {
                 val freeDirections =
                     getNeighboursCellsWithDirection(bot.x, bot.y)
                         .filter {
@@ -42,7 +42,7 @@ class BotController(private val id: Int, private val gameEngine: GameEngine) {
                 }
 
                 direction = freeDirections.random()
-//            }
+            }
             prevDirection = direction
             gameEngine.request(Move(id, direction))
         }
@@ -57,9 +57,9 @@ class BotController(private val id: Int, private val gameEngine: GameEngine) {
                 if (world.playersOnMap[fromCoords(x, y, world)]!!.any { it is Player }) {
                     return Direction.LEFT
                 }
-                countOfStep--
                 x--
             }
+            countOfStep--
         }
         x = currX
         countOfStep = 5
@@ -68,9 +68,9 @@ class BotController(private val id: Int, private val gameEngine: GameEngine) {
                 if (world.playersOnMap[fromCoords(x, y, world)]!!.any { it is Player }) {
                     return Direction.RIGHT
                 }
-                countOfStep--
                 x++
             }
+            countOfStep--
         }
         x = currX
         countOfStep = 5
@@ -79,9 +79,9 @@ class BotController(private val id: Int, private val gameEngine: GameEngine) {
                 if (world.playersOnMap[fromCoords(x, y, world)]!!.any { it is Player }) {
                     return Direction.UP
                 }
-                countOfStep--
                 y--
             }
+            countOfStep--
         }
         y = currY
         countOfStep = 5
@@ -90,9 +90,9 @@ class BotController(private val id: Int, private val gameEngine: GameEngine) {
                 if (world.playersOnMap[fromCoords(x, y, world)]!!.any { it is Player }) {
                     return Direction.DOWN
                 }
-                countOfStep--
                 y++
             }
+            countOfStep--
         }
         return null
     }
