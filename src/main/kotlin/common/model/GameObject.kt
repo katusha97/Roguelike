@@ -40,12 +40,17 @@ class Player(override var posX: Int, override var posY: Int, override var health
     MovableGameObject()
 
 @Serializable
+sealed class Bot: MovableGameObject()
+
+@Serializable
 class ActiveAngryBot(
     override var posX: Int, override var posY: Int,
     override var health: Int, val power: Int, override val id: Int
-) : MovableGameObject(), Attacker {
+) : Bot(), Attacker {
     override fun attack(enemy: MovableGameObject) {
-        enemy.health -= 10
+        if (enemy is Player) {
+            enemy.health -= 10
+        }
     }
 }
 
@@ -53,9 +58,11 @@ class ActiveAngryBot(
 class PassiveAngryBot(
     override var posX: Int, override var posY: Int,
     override var health: Int, val power: Int, override val id: Int
-) : MovableGameObject(), Attacker {
+) : Bot(), Attacker {
     override fun attack(enemy: MovableGameObject) {
-        enemy.health -= 5
+        if (enemy is Player) {
+            enemy.health -= 5
+        }
     }
 
 }

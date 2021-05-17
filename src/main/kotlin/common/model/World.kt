@@ -10,11 +10,11 @@ class World(val map: LevelStaticMap, val playersById: MutableMap<Int, MovableGam
         LevelStaticMap(mutableMapOf(), sizeX, sizeY), mutableMapOf(), mutableMapOf()
     )
 
-    fun getPlayersOnMap(x: Int, y: Int): HashSet<MovableGameObject> {
+    fun getMovableGameObjectsOnMap(x: Int, y: Int): HashSet<MovableGameObject> {
         return playersOnMap.computeIfAbsent(Pair(x, y)) { HashSet() }
     }
 
-    fun addPlayer(player: Player) {
+    fun addPlayer(player: MovableGameObject) {
         playersById[player.id] = player
         playersOnMap.computeIfAbsent(Pair(player.x, player.y)) { HashSet() }.add(player)
     }
@@ -22,8 +22,8 @@ class World(val map: LevelStaticMap, val playersById: MutableMap<Int, MovableGam
     fun movePlayerTo(id: Int, x: Int, y: Int) {
         val player: MovableGameObject = playersById[id] ?: return
 
-        getPlayersOnMap(player.x, player.y).remove(player)
+        getMovableGameObjectsOnMap(player.x, player.y).remove(player)
         player.move(x, y)
-        getPlayersOnMap(x, y).add(player)
+        getMovableGameObjectsOnMap(x, y).add(player)
     }
 }

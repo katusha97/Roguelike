@@ -47,11 +47,7 @@ class CreateBot(val id: Int) : GameAction() {
         } else {
             ActiveAngryBot(x, y, 100, 10, id)
         }
-        world.playersById[id] = newBot
-        if (!world.playersOnMap.containsKey(Pair(x, y))) {
-            world.playersOnMap[Pair(x, y)] = HashSet()
-        }
-        world.playersOnMap[Pair(x, y)]!!.add(newBot)
+        world.addPlayer(newBot)
     }
 }
 
@@ -74,7 +70,7 @@ class Move(private val playerID: Int, private val direction: Direction) : GameAc
         }
 
         if (world.map.cellIsEmpty(newX, newY)) {
-            for (other in world.getPlayersOnMap(newX, newY)) {
+            for (other in world.getMovableGameObjectsOnMap(newX, newY)) {
                 if (gameObject is Attacker) {
                     gameObject.attack(other)
                 }
@@ -86,10 +82,6 @@ class Move(private val playerID: Int, private val direction: Direction) : GameAc
         }
     }
 }
-
-//fun fromCoords(x: Int, y: Int, world: World): Int {
-//    return (y - 1) * world.map.sizeX + x
-//}
 
 class Shoot : GameAction() {
 

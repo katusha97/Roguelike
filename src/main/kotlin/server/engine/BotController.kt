@@ -1,7 +1,6 @@
 package server.engine
 
-import common.model.Player
-import common.model.World
+import common.model.*
 import common.protocol.commands.Direction
 import kotlinx.coroutines.delay
 
@@ -20,84 +19,83 @@ class BotController(private val id: Int, private val gameEngine: GameEngine) {
             delay(1000)
             val world = getWorld()
 
-            val bot = world.playersById[id] ?: throw Exception("TODO")
-            var direction: Direction
-            val currX = bot.x
-            val currY = bot.y
-            if (getDirectionToPlayer(currX, currY, world) != null) {
-                direction = getDirectionToPlayer(currX, currY, world)!!
-            } else {
-                val freeDirections =
-                    getNeighboursCellsWithDirection(bot.x, bot.y)
-                        .filter {
-                            val x = it.first.x
-                            val y = it.first.y
-                            // TODO: 1) Make stones hash table (x, y) -> Cell
-                            !world.map.stones.values.any { it.x == x && it.y == y }
-                        }
-                        .map { it.second }
-                        .toMutableList()
-                if (freeDirections.size > 1) {
-                    freeDirections.remove(revertedDirection(prevDirection))
-                }
+            val bot = (world.playersById[id] as? Bot) ?: throw Exception("TODO")
 
-                direction = freeDirections.random()
+
+
+            val directionToPlayers = getDirectionToPlayer(bot.x, bot.y, world)
+            val currentFreeDirections: List<Direction>
+
+            when (bot) {
+                is ActiveAngryBot ->
+                    if (directionToPlayers != null) {
+                        currentFreeDirections = listOf(directionToPlayers)
+                    } else {
+                        currentFreeDirections = getFreeDirections(bot.x, bot.y, world)
+                        if (currentFreeDirections.size > 1) {
+                            currentFreeDirections.remove(revertedDirection(prevDirection))
+                        }
+                    }
+                is PassiveAngryBot -> {
+                    currentFreeDirections = getFreeDirections(bot.x, bot.y, world)
+
+                    if (directionToPlayers != null) {
+                        currentFreeDirections.remove(directionToPlayers)
+                    }
+                    if (currentFreeDirections.size > 1) {
+                        currentFreeDirections.remove(revertedDirection(prevDirection))
+                    }
+                }
             }
-            prevDirection = direction
-            gameEngine.request(Move(id, direction))
+            if (currentFreeDirections.isNotEmpty()) {
+                val direction = currentFreeDirections.random()
+                prevDirection = direction
+                gameEngine.request(Move(id, direction))
+            }
         }
     }
 
-    private fun getDirectionToPlayer(currX: Int, currY: Int, world: World): Direction? {
-        var countOfStep = 5
-        var x = currX
-        var y = currY
-        while (x > 0 && !world.map.stones.values.any { it.x == x && it.y == y } && countOfStep > 0) {
-            if (world.playersOnMap.containsKey(Pair(x, y))) {
-                if (world.playersOnMap[Pair(x, y)]!!.any { it is Player }) {
-                    return Direction.LEFT
-                }
-                x--
+    private fun getFreeDirections(x: Int, y: Int, world: World): MutableList<Direction> {
+        return getNeighboursCellsWithDirection(x, y)
+            .filter {
+                world.map.cellIsEmpty(it.first.x, it.first.y)
             }
-            countOfStep--
+            .map { it.second }
+            .toMutableList()
+    }
+
+    private fun getDirectionToPlayer(x: Int, y: Int, world: World): Direction? {
+        val existPlayerInCells = fun(cells: List<Pair<Int, Int>>) =
+            cells
+                .flatMap { world.getMovableGameObjectsOnMap(it.first, it.second) }
+                .filterIsInstance<Player>()
+                .isNotEmpty()
+
+        val constructPathAlongDirection = fun(count: Int, dir: Direction): MutableList<Pair<Int, Int>> {
+            var currX = x
+            var currY = y
+
+            val xs = mutableListOf<Pair<Int, Int>>()
+            repeat(count) {
+                when (dir) {
+                    Direction.RIGHT -> currX += 1
+                    Direction.LEFT -> currX -= 1
+                    Direction.UP -> currY += 1
+                    Direction.DOWN -> currY -= 1
+                }
+                if (!world.map.cellIsEmpty(currX, currY)) {
+                    return xs
+                }
+                xs.add(Pair(currX, currY))
+            }
+            return xs
         }
-        x = currX
-        countOfStep = 5
-        while (x < world.map.sizeY - 1 && !world.map.stones.values.any { it.x == x && it.y == y } && countOfStep > 0) {
-            if (world.playersOnMap.containsKey(Pair(x, y))) {
-                if (world.playersOnMap[Pair(x, y)]!!.any { it is Player }) {
-                    return Direction.RIGHT
-                }
-                x++
+
+        for (dir in Direction.values()) {
+            if (existPlayerInCells(constructPathAlongDirection(5, dir))) {
+                return dir
             }
-            countOfStep--
-        }
-        x = currX
-        countOfStep = 5
-        while (y > 0 && !world.map.stones.values.any { it.x == x && it.y == y } && countOfStep > 0) {
-            if (world.playersOnMap.containsKey(Pair(x, y))) {
-                if (world.playersOnMap[Pair(x, y)]!!.any { it is Player }) {
-                    return Direction.UP
-                }
-                y--
-            }
-            countOfStep--
-        }
-        y = currY
-        countOfStep = 5
-        while (y < world.map.sizeY - 1 && !world.map.stones.values.any { it.x == x && it.y == y } && countOfStep > 0) {
-            if (world.playersOnMap.containsKey(Pair(x, y))) {
-                if (world.playersOnMap[Pair(x, y)]!!.any { it is Player }) {
-                    return Direction.DOWN
-                }
-                y++
-            }
-            countOfStep--
         }
         return null
     }
 }
-
-//fun toCoords(num: Int, world: World): Pair<Int, Int> {
-//    return Pair(num % world.map.sizeX % num, num / world.map.sizeY)
-//}

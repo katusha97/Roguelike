@@ -63,7 +63,11 @@ class Drawer(private var world: World): JPanel() {
                 g.color = Color.RED
             }
             else {
-                g.color = Color.GREEN
+                when (player) {
+                    is ActiveAngryBot -> g.color = Color.ORANGE
+                    is PassiveAngryBot -> g.color = Color.GREEN
+                    is Player -> Color.BLACK
+                }
             }
             g.fillOval(currX, currY, sizePlayer, sizePlayer)
         }
