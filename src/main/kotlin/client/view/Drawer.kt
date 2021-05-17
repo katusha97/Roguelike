@@ -54,7 +54,7 @@ class Drawer(private var world: World): JPanel() {
         }
     }
 
-    private fun drawPlayer(players: HashMap<Int, MovableGameObject>, g: Graphics) {
+    private fun drawPlayer(players: Map<Int, MovableGameObject>, g: Graphics) {
         for (player in players.values) {
             val startY = sizeRect * world.map.sizeY + 50
             val currX = (player.x - 1) * sizeRect + startX + (sizeRect / 2 - sizePlayer / 2)

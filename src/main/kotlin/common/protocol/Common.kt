@@ -12,8 +12,12 @@ open class ClientServerCommunicationException(msg: String) : Exception(msg)
 class ClientDisconnectException(msg: String) : ClientServerCommunicationException(msg)
 
 abstract class ProtocolBase(val communication: ServerSocketWrapper) {
+    protected val jsonConfig = Json {
+        allowStructuredMapKeys = true
+    }
+
     protected inline fun <reified T: Command> send(command: T) {
-        communication.writeLine(Json.encodeToString(command))
+        communication.writeLine(jsonConfig.encodeToString(command))
     }
 
     protected suspend inline fun <reified T: Command> read() : T {
@@ -26,7 +30,7 @@ abstract class ProtocolBase(val communication: ServerSocketWrapper) {
         }
 
         // TODO: check and raise ClientServerCommunicationException
-        val cmd = Json.decodeFromString<T>(msg)
+        val cmd = jsonConfig.decodeFromString<T>(msg)
         return cmd
     }
 }

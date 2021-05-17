@@ -11,7 +11,7 @@ import java.lang.Exception
 
 class ClientProtocol(private val communication: ClientSocketWrapper) {
     private inline fun <reified T: Command> send(command: T) {
-        communication.writeLine(Json.encodeToString(command))
+        communication.writeLine(Json { allowStructuredMapKeys = true }.encodeToString(command))
     }
 
     private inline fun <reified T: Command> read() : T {
@@ -24,7 +24,7 @@ class ClientProtocol(private val communication: ClientSocketWrapper) {
             )
         }
 
-        val cmd = Json.decodeFromString<T>(msg)
+        val cmd = Json { allowStructuredMapKeys = true }.decodeFromString<T>(msg)
         return cmd
     }
 

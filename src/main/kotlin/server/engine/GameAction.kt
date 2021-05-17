@@ -28,10 +28,10 @@ class CreatePlayer(val id: Int, private val posX: Int = 2, private val posY: Int
     override fun execute(world: World) {
         val player = Player(posX, posY, 100, id)
         world.playersById[id] = player
-        if (!world.playersOnMap.containsKey(fromCoords(posX, posY, world))) {
-            world.playersOnMap[fromCoords(posX, posY, world)] = HashSet()
+        if (!world.playersOnMap.containsKey(Pair(posX, posY))) {
+            world.playersOnMap[Pair(posX, posY)] = HashSet()
         }
-        world.playersOnMap[fromCoords(posX, posY, world)]!!.add(player)
+        world.playersOnMap[Pair(posX, posY)]!!.add(player)
     }
 }
 
@@ -52,10 +52,10 @@ class CreateBot(val id: Int) : GameAction() {
             ActiveAngryBot(x, y, 100, 10, id)
         }
         world.playersById[id] = newBot
-        if (!world.playersOnMap.containsKey(fromCoords(x, y, world))) {
-            world.playersOnMap[fromCoords(x, y, world)] = HashSet()
+        if (!world.playersOnMap.containsKey(Pair(x, y))) {
+            world.playersOnMap[Pair(x, y)] = HashSet()
         }
-        world.playersOnMap[fromCoords(x, y, world)]!!.add(newBot)
+        world.playersOnMap[Pair(x, y)]!!.add(newBot)
     }
 }
 
@@ -80,27 +80,27 @@ class Move(private val playerID: Int, private val direction: Direction) : GameAc
 
         // TODO: Improve game object to stop this trash
         if (!world.map.stones.any { it.x == x && it.y == y }) {
-            world.playersOnMap[fromCoords(prevX, prevY, world)]!!.remove(gameObject)
+            world.playersOnMap[Pair(prevX, prevY)]!!.remove(gameObject)
             gameObject.move(x, y)
             if (gameObject is Player) {
-                if (world.playersOnMap.containsKey(fromCoords(x, y, world))) {
-                    val playerOnThisRect = world.playersOnMap[fromCoords(x, y, world)]
+                if (world.playersOnMap.containsKey(Pair(x, y))) {
+                    val playerOnThisRect = world.playersOnMap[Pair(x, y)]
                     if (playerOnThisRect!!.isNotEmpty()) {
                         gameObject.health -= 5
                     }
                 }
             }
-            if (!world.playersOnMap.containsKey(fromCoords(x, y, world))) {
-                world.playersOnMap[fromCoords(x, y, world)] = HashSet()
+            if (!world.playersOnMap.containsKey(Pair(x, y))) {
+                world.playersOnMap[Pair(x, y)] = HashSet()
             }
-            world.playersOnMap[fromCoords(x, y, world)]!!.add(gameObject)
+            world.playersOnMap[Pair(x, y)]!!.add(gameObject)
         }
     }
 }
 
-fun fromCoords(x: Int, y: Int, world: World): Int {
-    return (y - 1) * world.map.sizeX + x
-}
+//fun fromCoords(x: Int, y: Int, world: World): Int {
+//    return (y - 1) * world.map.sizeX + x
+//}
 
 class Shoot : GameAction() {
 

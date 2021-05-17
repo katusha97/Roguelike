@@ -53,8 +53,8 @@ class BotController(private val id: Int, private val gameEngine: GameEngine) {
         var x = currX
         var y = currY
         while (x > 0 && !world.map.stones.any { it.x == x && it.y == y } && countOfStep > 0) {
-            if (world.playersOnMap.containsKey(fromCoords(x, y, world))) {
-                if (world.playersOnMap[fromCoords(x, y, world)]!!.any { it is Player }) {
+            if (world.playersOnMap.containsKey(Pair(x, y))) {
+                if (world.playersOnMap[Pair(x, y)]!!.any { it is Player }) {
                     return Direction.LEFT
                 }
                 x--
@@ -64,8 +64,8 @@ class BotController(private val id: Int, private val gameEngine: GameEngine) {
         x = currX
         countOfStep = 5
         while (x < world.map.sizeY - 1 && !world.map.stones.any { it.x == x && it.y == y } && countOfStep > 0) {
-            if (world.playersOnMap.containsKey(fromCoords(x, y, world))) {
-                if (world.playersOnMap[fromCoords(x, y, world)]!!.any { it is Player }) {
+            if (world.playersOnMap.containsKey(Pair(x, y))) {
+                if (world.playersOnMap[Pair(x, y)]!!.any { it is Player }) {
                     return Direction.RIGHT
                 }
                 x++
@@ -75,8 +75,8 @@ class BotController(private val id: Int, private val gameEngine: GameEngine) {
         x = currX
         countOfStep = 5
         while (y > 0 && !world.map.stones.any { it.x == x && it.y == y } && countOfStep > 0) {
-            if (world.playersOnMap.containsKey(fromCoords(x, y, world))) {
-                if (world.playersOnMap[fromCoords(x, y, world)]!!.any { it is Player }) {
+            if (world.playersOnMap.containsKey(Pair(x, y))) {
+                if (world.playersOnMap[Pair(x, y)]!!.any { it is Player }) {
                     return Direction.UP
                 }
                 y--
@@ -86,8 +86,8 @@ class BotController(private val id: Int, private val gameEngine: GameEngine) {
         y = currY
         countOfStep = 5
         while (y < world.map.sizeY - 1 && !world.map.stones.any { it.x == x && it.y == y } && countOfStep > 0) {
-            if (world.playersOnMap.containsKey(fromCoords(x, y, world))) {
-                if (world.playersOnMap[fromCoords(x, y, world)]!!.any { it is Player }) {
+            if (world.playersOnMap.containsKey(Pair(x, y))) {
+                if (world.playersOnMap[Pair(x, y)]!!.any { it is Player }) {
                     return Direction.DOWN
                 }
                 y++
