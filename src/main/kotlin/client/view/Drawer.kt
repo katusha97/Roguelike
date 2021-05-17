@@ -82,7 +82,7 @@ class Drawer(private var world: World): JPanel() {
             x = startX
         }
         y = startY
-        for (stone in map.stones) {
+        for (stone in map.stones.values) {
             val currX = x + (stone.x - 1)  * sizeRect
             val currY = y - (stone.y - 1) * sizeRect
             g.color = Color.BLUE

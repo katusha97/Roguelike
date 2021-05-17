@@ -3,7 +3,7 @@ package utils
 import common.model.World
 
 fun World.toStringConsole(): String {
-    val stones = map.stones.map { Pair(it.x, it.y) }.toSet()
+    val stones = map.stones.keys.toSet()
     val builder = StringBuilder()
     for (y in map.sizeY downTo 1) {
         for (x in 1..map.sizeX) {

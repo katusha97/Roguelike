@@ -7,6 +7,10 @@ interface GameObject {
     val y: Int
 }
 
+interface Attacker {
+    fun attack(enemy: MovableGameObject)
+}
+
 @Serializable
 sealed class StaticGameObject : GameObject
 
@@ -14,8 +18,8 @@ sealed class StaticGameObject : GameObject
 sealed class MovableGameObject : GameObject {
     protected abstract var posX: Int
     protected abstract var posY: Int
+    abstract var health: Int
     abstract val id: Int
-    abstract val health: Int
 
     fun move(newPosX: Int, newPosY: Int) {
         posX = newPosX
@@ -39,13 +43,22 @@ class Player(override var posX: Int, override var posY: Int, override var health
 class ActiveAngryBot(
     override var posX: Int, override var posY: Int,
     override var health: Int, val power: Int, override val id: Int
-) : MovableGameObject()
+) : MovableGameObject(), Attacker {
+    override fun attack(enemy: MovableGameObject) {
+        enemy.health -= 10
+    }
+}
 
 @Serializable
 class PassiveAngryBot(
     override var posX: Int, override var posY: Int,
     override var health: Int, val power: Int, override val id: Int
-) : MovableGameObject()
+) : MovableGameObject(), Attacker {
+    override fun attack(enemy: MovableGameObject) {
+        enemy.health -= 5
+    }
+
+}
 
 // TODO:
 // 3) Научить ботов реагировать на игроков (крест видимости, пример, 5 клеток строго вправо)

@@ -27,11 +27,7 @@ sealed class GameAction : GameEngineRequest() {
 class CreatePlayer(val id: Int, private val posX: Int = 2, private val posY: Int = 2) : GameAction() {
     override fun execute(world: World) {
         val player = Player(posX, posY, 100, id)
-        world.playersById[id] = player
-        if (!world.playersOnMap.containsKey(Pair(posX, posY))) {
-            world.playersOnMap[Pair(posX, posY)] = HashSet()
-        }
-        world.playersOnMap[Pair(posX, posY)]!!.add(player)
+            world.addPlayer(player)
     }
 }
 
@@ -40,7 +36,7 @@ class CreateBot(val id: Int) : GameAction() {
         val randomForCoord = java.util.Random()
         var x = randomForCoord.ints(1, 2, world.map.sizeX).sum()
         var y = randomForCoord.ints(1, 2, world.map.sizeY).sum()
-        while (world.map.stones.any { it.x == x && it.y == y } || (x == 2 && y == 2)) {
+        while (!world.map.cellIsEmpty(x, y) || (x == 2 && y == 2)) {
             x = randomForCoord.ints(1, 2, world.map.sizeX).sum()
             y = randomForCoord.ints(1, 2, world.map.sizeY).sum()
         }
@@ -67,33 +63,26 @@ class Move(private val playerID: Int, private val direction: Direction) : GameAc
 
     override fun execute(world: World) {
         val gameObject: MovableGameObject = world.playersById[playerID] ?: return
-        var x = gameObject.x
-        var y = gameObject.y
-        val prevX = x
-        val prevY = y
+
+        var newX = gameObject.x
+        var newY = gameObject.y
         when (direction) {
-            Direction.LEFT -> x -= 1
-            Direction.RIGHT -> x += 1
-            Direction.UP -> y += 1
-            Direction.DOWN -> y -= 1
+            Direction.LEFT -> newX -= 1
+            Direction.RIGHT -> newX += 1
+            Direction.UP -> newY += 1
+            Direction.DOWN -> newY -= 1
         }
 
-        // TODO: Improve game object to stop this trash
-        if (!world.map.stones.any { it.x == x && it.y == y }) {
-            world.playersOnMap[Pair(prevX, prevY)]!!.remove(gameObject)
-            gameObject.move(x, y)
-            if (gameObject is Player) {
-                if (world.playersOnMap.containsKey(Pair(x, y))) {
-                    val playerOnThisRect = world.playersOnMap[Pair(x, y)]
-                    if (playerOnThisRect!!.isNotEmpty()) {
-                        gameObject.health -= 5
-                    }
+        if (world.map.cellIsEmpty(newX, newY)) {
+            for (other in world.getPlayersOnMap(newX, newY)) {
+                if (gameObject is Attacker) {
+                    gameObject.attack(other)
+                }
+                if (other is Attacker) {
+                    other.attack(gameObject)
                 }
             }
-            if (!world.playersOnMap.containsKey(Pair(x, y))) {
-                world.playersOnMap[Pair(x, y)] = HashSet()
-            }
-            world.playersOnMap[Pair(x, y)]!!.add(gameObject)
+            world.movePlayerTo(playerID, newX, newY)
         }
     }
 }

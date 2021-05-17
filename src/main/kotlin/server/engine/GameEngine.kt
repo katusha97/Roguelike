@@ -21,7 +21,7 @@ class GameEngine {
     suspend fun start() {
         while (true) {
             val cmd = channel.receive()
-            println("Game Engine receive request: $cmd")
+//            println("Game Engine receive request: $cmd")
 
             when (cmd) {
                 is GetWorld ->

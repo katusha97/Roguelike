@@ -33,7 +33,7 @@ class BotController(private val id: Int, private val gameEngine: GameEngine) {
                             val x = it.first.x
                             val y = it.first.y
                             // TODO: 1) Make stones hash table (x, y) -> Cell
-                            !world.map.stones.any { it.x == x && it.y == y }
+                            !world.map.stones.values.any { it.x == x && it.y == y }
                         }
                         .map { it.second }
                         .toMutableList()
@@ -52,7 +52,7 @@ class BotController(private val id: Int, private val gameEngine: GameEngine) {
         var countOfStep = 5
         var x = currX
         var y = currY
-        while (x > 0 && !world.map.stones.any { it.x == x && it.y == y } && countOfStep > 0) {
+        while (x > 0 && !world.map.stones.values.any { it.x == x && it.y == y } && countOfStep > 0) {
             if (world.playersOnMap.containsKey(Pair(x, y))) {
                 if (world.playersOnMap[Pair(x, y)]!!.any { it is Player }) {
                     return Direction.LEFT
@@ -63,7 +63,7 @@ class BotController(private val id: Int, private val gameEngine: GameEngine) {
         }
         x = currX
         countOfStep = 5
-        while (x < world.map.sizeY - 1 && !world.map.stones.any { it.x == x && it.y == y } && countOfStep > 0) {
+        while (x < world.map.sizeY - 1 && !world.map.stones.values.any { it.x == x && it.y == y } && countOfStep > 0) {
             if (world.playersOnMap.containsKey(Pair(x, y))) {
                 if (world.playersOnMap[Pair(x, y)]!!.any { it is Player }) {
                     return Direction.RIGHT
@@ -74,7 +74,7 @@ class BotController(private val id: Int, private val gameEngine: GameEngine) {
         }
         x = currX
         countOfStep = 5
-        while (y > 0 && !world.map.stones.any { it.x == x && it.y == y } && countOfStep > 0) {
+        while (y > 0 && !world.map.stones.values.any { it.x == x && it.y == y } && countOfStep > 0) {
             if (world.playersOnMap.containsKey(Pair(x, y))) {
                 if (world.playersOnMap[Pair(x, y)]!!.any { it is Player }) {
                     return Direction.UP
@@ -85,7 +85,7 @@ class BotController(private val id: Int, private val gameEngine: GameEngine) {
         }
         y = currY
         countOfStep = 5
-        while (y < world.map.sizeY - 1 && !world.map.stones.any { it.x == x && it.y == y } && countOfStep > 0) {
+        while (y < world.map.sizeY - 1 && !world.map.stones.values.any { it.x == x && it.y == y } && countOfStep > 0) {
             if (world.playersOnMap.containsKey(Pair(x, y))) {
                 if (world.playersOnMap[Pair(x, y)]!!.any { it is Player }) {
                     return Direction.DOWN

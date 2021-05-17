@@ -14,9 +14,9 @@ class WorldGenerator(private val sizeX: Int, private val sizeY: Int) {
 
         return World(
             LevelStaticMap(
-                stones.map {
-                    StoneItemProposal(it.x, it.y)
-                }.toSet(),
+                stones.associate {
+                    Pair(it.x, it.y) to StoneItemProposal(it.x, it.y)
+                }.toMutableMap(),
                 sizeX,
                 sizeY
             ),
