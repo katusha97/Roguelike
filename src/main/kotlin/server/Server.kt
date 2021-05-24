@@ -29,7 +29,6 @@ class Server(private val serverSocket: ServerSocket) {
                 clientNotifier.start()
             }
 
-            // Создаём ботов
             repeat(8) {
                 val newBotId = register.getNewId()
                 val bot = BotController(newBotId, gameEngine)

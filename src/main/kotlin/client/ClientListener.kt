@@ -10,18 +10,10 @@ class ClientListener(communication: ClientSocketWrapper, private val frame: View
 
     override fun run() {
         val idClass = protocol.readClientId()
-        var world = protocol.readUpdateWorld()
-        frame.updateWorld(world, idClass.id)
-
-        log("Retrieve world:")
-        print(world.toStringConsole())
 
         while (true) {
-            world = protocol.readUpdateWorld()
+            val world = protocol.readUpdateWorld()
             frame.updateWorld(world, idClass.id)
-
-            log("Retrieved updated world:")
-            println(world.toStringConsole())
         }
     }
 

@@ -16,7 +16,6 @@ class ClientProtocol(private val communication: ClientSocketWrapper) {
 
     private inline fun <reified T: Command> read() : T {
         val msg: String = try {
-            println("here")
             communication.readLine()
         } catch (e: Exception) {
             throw ClientDisconnectException(

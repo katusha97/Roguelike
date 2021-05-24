@@ -8,8 +8,8 @@ fun World.toStringConsole(): String {
     for (y in map.sizeY downTo 1) {
         for (x in 1..map.sizeX) {
             when {
-//                player.x == x && player.y == y -> builder.append("\uD83D\uDCA9")
                 Pair(x, y) in stones -> builder.append("\uD83E\uDDF1")
+                getMovableGameObjectsOnMap(x, y).isNotEmpty() -> builder.append("\uD83D\uDCA9")
                 else -> builder.append("  ")
             }
         }

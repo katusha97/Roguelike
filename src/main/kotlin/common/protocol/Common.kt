@@ -29,7 +29,6 @@ abstract class ProtocolBase(val communication: ServerSocketWrapper) {
             )
         }
 
-        // TODO: check and raise ClientServerCommunicationException
         val cmd = jsonConfig.decodeFromString<T>(msg)
         return cmd
     }
