@@ -51,6 +51,11 @@ class CreateBot(val id: Int) : GameAction() {
     }
 }
 
+class DeleteMovableObject(val id: Int): GameAction() {
+    override fun execute(world: World) {
+        world.removePlayerById(id)
+    }
+}
 
 class Move(private val playerID: Int, private val direction: Direction) : GameAction() {
     override fun getName(): String {
