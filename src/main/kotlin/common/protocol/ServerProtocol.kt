@@ -14,20 +14,8 @@ class ServerProtocol(communication: ServerSocketWrapper): ProtocolBase(communica
         send(cmd)
     }
 
-    fun sendUpdateWorld(world: World) {
-        send(UpdateWorld(world))
-    }
-
     fun sendClientId(id: Id) {
         send(SendIdToClient(id))
-    }
-
-    fun sendInitializeWorld(world: World) {
-        send(InitializeWorld(world))
-    }
-
-    fun sendExitAccept() {
-        send(ExitAccept())
     }
 
     suspend fun readAction(): ActionPlayer {

@@ -19,6 +19,14 @@ class World(val map: LevelStaticMap, val playersById: MutableMap<Int, MovableGam
         playersOnMap.computeIfAbsent(Pair(player.x, player.y)) { HashSet() }.add(player)
     }
 
+    fun removePlayerById(id: Int) {
+        val player: MovableGameObject = playersById[id] ?: return
+        val objects = getMovableGameObjectsOnMap(player.x, player.y)
+
+        objects.remove(player)
+        playersById.remove(id)
+    }
+
     fun movePlayerTo(id: Int, x: Int, y: Int) {
         val player: MovableGameObject = playersById[id] ?: return
 

@@ -1,21 +1,21 @@
 package server
 
-import common.model.Id
-import common.protocol.ServerProtocol
-import io.ktor.network.selector.*
+import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.core.subcommands
+import com.github.ajalt.clikt.parameters.options.default
+import com.github.ajalt.clikt.parameters.options.option
+import com.github.ajalt.clikt.parameters.types.int
 import io.ktor.network.sockets.*
 import kotlinx.coroutines.*
 import server.engine.BotController
 import server.engine.GameEngine
-import server.notifier.ClientSubscriber
 import server.notifier.UpdateWorldNotifier
 import utils.ServerSocketWrapper
-import java.net.InetSocketAddress
 
 class Server(private val serverSocket: ServerSocket) {
     private fun startImpl() {
         runBlocking {
-            println("Server was started on localhost:${serverSocket.localAddress}. Welcome!")
+            println("Server was started on ${serverSocket.localAddress}. Welcome!")
 
             val register = PlayerRegister()
 
@@ -45,11 +45,7 @@ class Server(private val serverSocket: ServerSocket) {
                     println("Accept: user with id $targetUserID connected")
 
                     val communication = ServerSocketWrapper(accept)
-                    val protocol = ServerProtocol(communication)
-                    protocol.sendClientId(Id(targetUserID))
-                    clientNotifier.subscribe(ClientSubscriber(communication))
-
-                    val listener = ServerListener(communication, gameEngine, targetUserID)
+                    val listener = ServerListener(communication, gameEngine, clientNotifier, targetUserID)
                     launch {
                         listener.startCommunication()
                     }
@@ -61,14 +57,4 @@ class Server(private val serverSocket: ServerSocket) {
     }
 
     fun start() = serverSocket.use { startImpl() }
-}
-
-fun main() {
-    val serverSocket = aSocket(
-        ActorSelectorManager(Dispatchers.IO))
-        .tcp()
-        .bind(InetSocketAddress("127.0.0.1", 8000)
-    )
-    val server = Server(serverSocket)
-    server.start()
 }
